@@ -80,8 +80,8 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid Credentials",
-        error: "User not found",
+        message: "No account found with this email. Please register first.",
+        error: "Invalid Credentials. User not found",
       });
     }
 
@@ -90,8 +90,8 @@ export const login = async (req, res) => {
     if (!matchPasseord) {
       return res.status(401).json({
         success: false,
-        message: "Invalid Credentials",
-        error: "Incorrect Password",
+        message: "Incorrect password. Please try again.",
+        error: "Invalid Credentials. Incorrect Password",
       });
     }
 
