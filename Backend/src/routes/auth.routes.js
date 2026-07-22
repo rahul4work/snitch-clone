@@ -1,6 +1,17 @@
 import { Router } from "express";
-import { login, logout, register } from "../controllers/auth.controllers.js";
-import { validateLoginUser, validateRegisterUser } from "../validators/auth.validators.js";
+import {
+  getMe,
+  googleCallback,
+  login,
+  logout,
+  register,
+} from "../controllers/auth.controllers.js";
+import {
+  validateLoginUser,
+  validateRegisterUser,
+} from "../validators/auth.validators.js";
+import passport from "passport";
+import { authenticateUser } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
 
@@ -23,6 +34,34 @@ router.post("/login", validateLoginUser, login);
  * @description Logout user
  * @access Public
  */
-router.post("/logout", logout)
+router.post("/logout", logout);
+
+/**
+ * @route GET /api/auth/
+ * @description Get current logged in user details
+ * @access Private
+ */
+router.get("/me", authenticateUser, getMe);
+
+/**
+ * @route GET /api/auth/google
+ * @description Authenticate user with Google OAuth
+ * @access Public
+ */
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["email", "profile"] }),
+);
+
+/**
+ * @route GET /api/auth/google/callback
+ * @description Handle Google OAuth callback
+ * @access Public
+ */
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false }),
+  googleCallback,
+);
 
 export default router;
