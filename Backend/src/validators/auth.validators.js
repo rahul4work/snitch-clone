@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 
+// custom validation middleware
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
 
@@ -14,6 +15,7 @@ const validateRequest = (req, res, next) => {
   next();
 };
 
+// register user validation
 export const validateRegisterUser = [
   body("email")
     .trim()
@@ -55,6 +57,7 @@ export const validateRegisterUser = [
   validateRequest,
 ];
 
+// login user validation
 export const validateLoginUser = [
   body("email")
     .trim()

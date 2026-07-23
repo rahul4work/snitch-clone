@@ -1,0 +1,46 @@
+import { body, validationResult } from "express-validator";
+
+// custom validation middleware
+const validateRequest = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      error: errors.array(),
+    });
+  }
+
+  next();
+};
+
+// create product validation
+export const createProductValidator = [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("Title is required")
+    .isLength({ min: 3, max: 100 })
+    .withMessage("Title must be between 3 and 100 characters"),
+
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("Description is required")
+    .isLength({ min: 10, max: 2000 })
+    .withMessage("Description must be between 10 and 2000 characters"),
+
+  body("priceAmount")
+    .notEmpty()
+    .withMessage("Price amount is required")
+    .isFloat({ gt: 0 })
+    .withMessage("Price amount must be greater than 0"),
+
+  body("priceCurrency")
+    .optional()
+    .isIn(["USD", "EUR", "GBP", "JYP", "INR"])
+    .withMessage("Invalid currency"),
+
+  validateRequest,
+];
