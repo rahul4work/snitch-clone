@@ -23,6 +23,7 @@ import cargos from "../../../assets/cargos.jpeg";
 import polos from "../../../assets/polos.jpeg";
 import shorts from "../../../assets/shorts.jpeg";
 import shoes from "../../../assets/shoes.jpeg";
+import { useProduct } from "../hook/useProduct";
 
 const navLinks = ["Faishon", "Accessories", "Perfumes", "Watches", "Shoes"];
 
@@ -51,6 +52,10 @@ const categories = [
 ];
 
 const Home = () => {
+  const { handleGetAllProducts } = useProduct();
+
+  const products = useSelector((state) => state.product.products);
+
   const user = useSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
@@ -59,6 +64,18 @@ const Home = () => {
   const [searchVal, setSearchVal] = useState("");
   const [activeNav, setActiveNav] = useState(null);
   const [activeCategory, setActiveCategory] = useState("ALL");
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        await handleGetAllProducts();
+      } catch (error) {
+        console.error("Failed to fetch products: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleWishlistClick = () => {
     if (user) {
@@ -282,7 +299,7 @@ const Home = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {((item) => (
+              {products?.map((item) => (
                 <div
                   key={item._id}
                   className="group bg-white border border-zinc-300 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
