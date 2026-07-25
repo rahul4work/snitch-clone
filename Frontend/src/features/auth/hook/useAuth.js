@@ -78,7 +78,6 @@ const useAuth = () => {
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrorng";
       dispatch(setError(message));
-      dispatch(setUser(null));
     } finally {
       dispatch(setLoading(false));
     }

@@ -175,7 +175,7 @@ export const addProductVariant = async (req, res) => {
 
   const price = req.body.priceAmount || undefined;
   const stock = req.body.stock;
-  const attributes = JSON.parse(req.body.attributes || "{}");
+  const attributes = JSON.parse(req.body.attribute || "{}");
   console.log(attributes);
 
   console.log(product, images, price, stock, attributes);
