@@ -178,7 +178,7 @@ export const googleCallback = async (req, res) => {
 
     res.cookie("token", token);
 
-    res.redirect("http://localhost:5173");
+    res.redirect("http://localhost:5174");
   } catch (error) {
     return res.status(500).json({
       success: false,

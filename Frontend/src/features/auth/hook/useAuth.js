@@ -59,13 +59,13 @@ const useAuth = () => {
       dispatch(setError(null));
 
       await logout();
-
+      
       dispatch(setUser(null));
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrorng";
       dispatch(setError(message));
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 

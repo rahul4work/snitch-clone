@@ -165,20 +165,17 @@ export const addProductVariant = async (req, res) => {
   const files = req.files || [];
 
   const images = await Promise.all(
-    files.map((file) => {
+    files.map((file) =>
       uploadFile({
         buffer: file.buffer,
         fileName: file.originalname,
-      });
-    }),
+      }),
+    ),
   );
 
   const price = req.body.priceAmount || undefined;
   const stock = req.body.stock;
   const attributes = JSON.parse(req.body.attribute || "{}");
-  console.log(attributes);
-
-  console.log(product, images, price, stock, attributes);
 
   product.variants.push({
     images,
