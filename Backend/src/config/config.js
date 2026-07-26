@@ -5,6 +5,14 @@ if (!process.env.PORT) {
   throw new Error("PORT is not defined in the environment variables");
 }
 
+if (!process.env.FRONTEND_URL) {
+  throw new Error("FRONTEND_URL is not defined in the environment variables");
+}
+
+if (!process.env.BACKEND_URL) {
+  throw new Error("BACKEND_URL is not defined in the environment variables");
+}
+
 if (!process.env.MONGODB_URI) {
   throw new Error("MONGODB_URI is not defined in the environment variables");
 }
@@ -26,7 +34,9 @@ if (!process.env.IMAGEKIT_PRIVATE_KEY) {
 }
 
 export const config = {
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT,
+  FRONTEND_URL: process.env.FRONTEND_URL,
+  BACKEND_URL: process.env.BACKEND_URL,
   MONGODB_URI: process.env.MONGODB_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

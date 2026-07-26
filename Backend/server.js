@@ -2,7 +2,7 @@ import app from "./src/app.js";
 import { config } from "./src/config/config.js";
 import connectToMongoDB from "./src/config/db.js";
 
-const PORT = config.PORT || 3000;
+const PORT = config.PORT;
 
 // Start the server and connect to MongoDB
 const startServer = async () => {
