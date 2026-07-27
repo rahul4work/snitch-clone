@@ -274,3 +274,11 @@ The production build will be generated inside the `dist/` folder.
 
 - GitHub: https://github.com/rahul4work
 - LinkedIn: https://linkedin.com/in/kumar-rahul4work/
+
+---
+
+## 📄 License
+
+This project is shared for learning and portfolio purposes only.
+
+Please do not redistribute or use it commercially without permission
