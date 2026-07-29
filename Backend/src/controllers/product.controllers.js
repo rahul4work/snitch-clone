@@ -143,6 +143,32 @@ export const getProductDetails = async (req, res) => {
 };
 
 /**
+ * @route GET /api/products/seller/details/:id
+ * @description Get Seller's product details by id and sellerId
+ * @access Private
+ */
+export const getSellerProductDetails = async (req, res) => {
+  const { id } = req.params;
+
+  const product = await productModel.findOne({
+    _id: id,
+    seller: req.user._id,
+  });
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    product,
+  });
+};
+
+/**
  * @route POST /api/products/:productId/variants
  * @description Add a product variant to a product
  * @access Private (seller)

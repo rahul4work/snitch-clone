@@ -8,6 +8,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductDetails,
+  getSellerProductDetails,
   getSellerProducts,
 } from "../controllers/product.controllers.js";
 
@@ -53,6 +54,13 @@ router.get("/", getAllProducts);
  * @access Public
  */
 router.get("/details/:id", getProductDetails);
+
+/**
+ * @route GET /api/products/seller/details/:id
+ * @description Get Seller's product details by id and sellerId
+ * @access Private
+ */
+router.get("/seller/details/:id", authenticateSeller, getSellerProductDetails);
 
 /**
  * @route POST /api/products/:productId/variants

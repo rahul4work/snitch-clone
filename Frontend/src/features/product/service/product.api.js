@@ -35,6 +35,12 @@ export const getProductDetails = async (productId) => {
   return response.data;
 };
 
+export const getSellerProductDetails = async (productId) => {
+  const response = await productApiInstance.get(`/seller/details/${productId}`);
+
+  return response.data;
+};
+
 export const addProductVariant = async (productId, newProductVariant) => {
   const formData = new FormData();
 

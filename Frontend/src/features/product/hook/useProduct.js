@@ -5,6 +5,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductDetails,
+  getSellerProductDetails,
   getSellerProducts,
 } from "../service/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
@@ -42,6 +43,12 @@ export const useProduct = () => {
     return data.product;
   }
 
+  async function handleGetSellerProductDetails(productId) {
+    const data = await getSellerProductDetails(productId);
+
+    return data.product;
+  }
+
   async function handleAddProductVariant(productId, newProductVariant) {
     const data = await addProductVariant(productId, newProductVariant);
 
@@ -54,6 +61,7 @@ export const useProduct = () => {
     handleGetAllProducts,
     handleDeleteProduct,
     handleGetProductDetails,
+    handleGetSellerProductDetails,
     handleAddProductVariant,
   };
 };

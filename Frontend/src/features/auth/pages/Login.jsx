@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import TitleLogo from "../components/TitleLogo.jsx";
 import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 import ImageSection from "../components/ImageSection.jsx";
@@ -23,6 +23,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!error) return;
@@ -151,20 +152,33 @@ const Login = () => {
                   Password
                 </label>
 
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  className={`w-full h-12 px-4 rounded-xl border bg-white focus:outline-none focus:ring-2 transition
-                    ${
-                      errors.password
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-orange-500 focus:border-orange-500"
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    className={`w-full h-12 px-4 pr-12 rounded-xl border bg-white focus:outline-none focus:ring-2 transition
+                      ${
+                        errors.password
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-orange-500 focus:border-orange-500"
+                      }
+                    `}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
                     }
-                  `}
-                />
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
 
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">{errors.password}</p>

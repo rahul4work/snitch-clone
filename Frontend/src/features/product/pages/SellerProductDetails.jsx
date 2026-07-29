@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { ChevronLeft, ChevronRight, PackageSearch, Plus, Trash, Upload, X } from "lucide-react";
+import { useNavigate, useParams } from "react-router";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PackageSearch,
+  Plus,
+  Trash,
+  Upload,
+  X,
+} from "lucide-react";
 import Navbar from "../components/Navbar.jsx";
 import { useProduct } from "../hook/useProduct.js";
 
@@ -20,6 +28,7 @@ const getCurrencySymbol = (currency) => {
 };
 
 const SellerProductDetails = () => {
+  const navigate = useNavigate();
 
   const { productId } = useParams();
 
@@ -38,15 +47,17 @@ const SellerProductDetails = () => {
   const [variantImages, setVariantImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  const { handleGetProductDetails, handleAddProductVariant } = useProduct();
+  const { handleGetSellerProductDetails, handleAddProductVariant } =
+    useProduct();
 
   async function fetchProductDetails() {
     try {
       setLoading(true);
-      const data = await handleGetProductDetails(productId);
+      const data = await handleGetSellerProductDetails(productId);
       setProduct(data?.product || data);
     } catch (error) {
       console.log("Failed to fetch product details", error);
+      navigate("/seller/products");
     } finally {
       setLoading(false);
     }
