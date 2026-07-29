@@ -1,7 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { useProduct } from "../hook/useProduct";
-import { ChevronLeft, ChevronRight, Lock, RotateCcw, Shield, ShoppingCart, Truck, Zap } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Lock,
+  RotateCcw,
+  Shield,
+  ShoppingCart,
+  Truck,
+  Zap,
+} from "lucide-react";
 import Navbar from "../components/Navbar.jsx";
 
 const getCurrencySymbol = (currency) => {
@@ -24,7 +33,22 @@ const normalizeAttributes = (attributes) => {
   if (attributes instanceof Map) {
     return Object.fromEntries(attributes);
   }
+  if (attributes?.toJSON && typeof attributes.toJSON === "function") {
+    return attributes.toJSON();
+  }
   return attributes;
+};
+
+const normalizeProductForUI = (productData) => {
+  if (!productData) return null;
+
+  return {
+    ...productData,
+    variants: (productData.variants || []).map((variant) => ({
+      ...variant,
+      attributes: normalizeAttributes(variant?.attributes),
+    })),
+  };
 };
 
 const getAttributeGroups = (variants = []) => {
@@ -42,20 +66,75 @@ const getAttributeGroups = (variants = []) => {
   return groups;
 };
 
+const normalizeValue = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase();
+
 const findMatchingVariant = (variants, selectedAttributes) => {
   const entries = Object.entries(selectedAttributes);
   if (entries.length === 0) return null;
 
-  return variants.find((variant) => {
+  const exactMatch = variants.find((variant) => {
     const attrs = normalizeAttributes(variant.attributes);
-    return entries.every(([key, value]) => attrs[key] === value);
+    return entries.every(
+      ([key, value]) => normalizeValue(attrs[key]) === normalizeValue(value),
+    );
   });
+
+  if (exactMatch) return exactMatch;
+
+  return (
+    variants.find((variant) => {
+      const attrs = normalizeAttributes(variant.attributes);
+      return entries.every(([key, value]) => {
+        const attrValue = attrs[key];
+        return (
+          !attrValue || normalizeValue(attrValue) === normalizeValue(value)
+        );
+      });
+    }) || null
+  );
+};
+
+const resolveSelectionFromVariants = (variants, selection) => {
+  const entries = Object.entries(selection);
+  if (entries.length === 0) return {};
+
+  const matchingVariants = variants.filter((variant) => {
+    const attrs = normalizeAttributes(variant.attributes);
+    return entries.every(([key, value]) => {
+      const attrValue = attrs[key];
+      return normalizeValue(attrValue) === normalizeValue(value);
+    });
+  });
+
+  if (matchingVariants.length === 0) {
+    return entries.length > 1 ? { [entries[0][0]]: entries[0][1] } : selection;
+  }
+
+  if (matchingVariants.length === 1) {
+    const resolvedAttributes = normalizeAttributes(
+      matchingVariants[0].attributes,
+    );
+    const resolvedSelection = { ...selection };
+
+    Object.entries(resolvedAttributes).forEach(([key, value]) => {
+      if (!resolvedSelection[key]) {
+        resolvedSelection[key] = value;
+      }
+    });
+
+    return resolvedSelection;
+  }
+
+  return selection;
 };
 
 const StockBadge = ({ stock, isDefault }) => {
   if (isDefault) {
     return (
-      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
         In Stock
       </span>
     );
@@ -95,7 +174,7 @@ const ProductDetails = () => {
     try {
       setLoading(true);
       const data = await handleGetProductDetails(productId);
-      setProduct(data?.product || data);
+      setProduct(normalizeProductForUI(data?.product || data));
     } catch (error) {
       console.log("Failed to fetch product details", error);
     } finally {
@@ -143,16 +222,46 @@ const ProductDetails = () => {
 
   const stock = useDefaultProduct ? null : Number(selectedVariant?.stock ?? 0);
 
-  const handleSelectDefault = () => {
-    setUseDefaultProduct(true);
-    setSelectedAttributes({});
+  const handleSelectAttribute = (attrKey, value) => {
+    setUseDefaultProduct(false);
+    setSelectedAttributes((prev) => {
+      const nextSelection = { [attrKey]: value };
+
+      Object.entries(prev).forEach(([key, selectedValue]) => {
+        if (key === attrKey) return;
+
+        const testSelection = { ...nextSelection, [key]: selectedValue };
+        const matchingVariants = variants.filter((variant) => {
+          const attrs = normalizeAttributes(variant.attributes);
+          return Object.entries(testSelection).every(
+            ([selectionKey, selectionValue]) => {
+              const attrValue = attrs[selectionKey];
+              return (
+                normalizeValue(attrValue) === normalizeValue(selectionValue)
+              );
+            },
+          );
+        });
+
+        if (matchingVariants.length > 0) {
+          nextSelection[key] = selectedValue;
+        }
+      });
+
+      return resolveSelectionFromVariants(variants, nextSelection);
+    });
     setSelectedImage(0);
   };
 
-  const handleSelectAttribute = (attrKey, value) => {
-    setUseDefaultProduct(false);
-    setSelectedAttributes((prev) => ({ ...prev, [attrKey]: value }));
-    setSelectedImage(0);
+  const handleAddToCart = () => {
+    const selectedVariantId = useDefaultProduct
+      ? variants[0]?._id
+      : selectedVariant?._id;
+
+    console.log("Add to cart", {
+      productId: product?._id,
+      variantId: selectedVariantId,
+    });
   };
 
   const handlePrevImage = () => {
@@ -265,8 +374,8 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* Product info — compact spacing, matches image height */}
-          <div className="flex flex-col max-lg:gap-4 lg:h-150 lg:overflow-y-auto no-scrollbar gap-5">
+          {/* Product info */}
+          <div className="flex flex-col max-lg:gap-4 gap-5">
             <div className="space-y-1">
               <h1 className="text-lg sm:text-2xl font-semibold text-zinc-900 leading-snug tracking-tight">
                 {product.title}
@@ -276,7 +385,7 @@ const ProductDetails = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 pb-2 border-b border-zinc-200">
+            <div className="flex items-center gap-2.5 pb-2 border-b border-zinc-200">
               <span className="text-2xl font-bold text-zinc-900 tracking-tight">
                 {symbol}
                 {amount}
@@ -285,82 +394,73 @@ const ProductDetails = () => {
             </div>
 
             {variants.length > 0 && (
-              <div className="space-y-2">
-                <div>
-                  <p className="text-[12px] font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
-                    Product Option
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={handleSelectDefault}
-                      className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-all cursor-pointer ${
-                        useDefaultProduct
-                          ? "border-orange-500 bg-orange-50 text-orange-600"
-                          : "border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600"
-                      }`}
-                    >
-                      Default
-                    </button>
-                  </div>
-                </div>
+              <div className="space-y-3">
+                {Object.keys(attributeGroups).length > 0 &&
+                  Object.entries(attributeGroups).map(([attrKey, values]) => (
+                    <div key={attrKey}>
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-400">
+                        {attrKey}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {[...values].map((value) => {
+                          const active =
+                            !useDefaultProduct &&
+                            normalizeValue(selectedAttributes[attrKey]) ===
+                              normalizeValue(value);
 
-                {Object.keys(attributeGroups).length > 0 && (
-                  <div className="flex flex-wrap items-start gap-5 pt-0.5">
-                    {Object.entries(attributeGroups).map(
-                      ([attrKey, values], index) => (
-                        <React.Fragment key={attrKey}>
-                          {index > 0 && (
-                            <div
-                              className="hidden sm:block w-px self-stretch bg-zinc-200 shrink-0"
-                              aria-hidden="true"
-                            />
-                          )}
-                          <div className="min-w-0 flex-1 sm:flex-none sm:min-w-25">
-                            <p className="text-[12px] font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
-                              {attrKey}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {[...values].map((value) => {
-                                const active =
-                                  !useDefaultProduct &&
-                                  selectedAttributes[attrKey] === value;
-
-                                return (
-                                  <button
-                                    key={value}
-                                    onClick={() =>
-                                      handleSelectAttribute(attrKey, value)
-                                    }
-                                    className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
-                                      active
-                                        ? "border-orange-500 bg-orange-50 text-orange-600"
-                                        : "border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600"
-                                    }`}
-                                  >
-                                    {value}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </React.Fragment>
-                      ),
-                    )}
-                  </div>
-                )}
+                          return (
+                            <button
+                              key={value}
+                              onClick={() =>
+                                handleSelectAttribute(attrKey, value)
+                              }
+                              className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
+                                active
+                                  ? "border-orange-500 bg-orange-50 text-orange-600"
+                                  : "border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600"
+                              }`}
+                            >
+                              {value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+            <div className="flex md:w-120 sm:w-100 flex-col gap-4 pt-1 px-1">
+              <button
+                onClick={handleAddToCart}
+                id="btn-add-to-cart"
+                className="flex items-center justify-center gap-1.5 border border-orange-500 text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-orange-50 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <ShoppingCart size={16} />
+                Add to Cart
+              </button>
+
+              <button
+                id="btn-buy-now"
+                className="flex items-center justify-center gap-1.5 bg-orange-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-sm shadow-orange-200/60 hover:bg-orange-600 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <Zap size={16} />
+                Buy Now
+              </button>
+            </div>
+
+            <div className="grid md:w-120 sm:w-100 grid-cols-2 gap-x-4 gap-y-1.5 px-2">
               {[
                 { icon: Truck, label: "Free delivery" },
                 { icon: Shield, label: "1-year warranty" },
                 { icon: RotateCcw, label: "Easy returns" },
                 { icon: Lock, label: "Secure payments" },
-              ].map(({ icon: Icon, label }) => (
+              ].map(({ icon: Icon, label }, index) => (
                 <div
                   key={label}
-                  className="flex items-center gap-1.5 text-sm text-zinc-500"
+                  className={`flex items-center gap-1.5 text-sm text-zinc-500 ${
+                    index % 2 === 1 ? "md:pl-24 sm:pl-12" : ""
+                  }`}
                 >
                   <Icon size={13} className="text-orange-500 shrink-0" />
                   {label}
@@ -368,49 +468,43 @@ const ProductDetails = () => {
               ))}
             </div>
 
-            <div className="flex gap-4 text-xs border-t border-zinc-200 pt-2">
-              <div>
-                <span className="text-zinc-400 uppercase tracking-wide text-[12px]">
-                  Brand
-                </span>
-                <p className="font-medium text-sm text-zinc-700 mt-0.5">
-                  {product.title}
-                </p>
+            <div className="md:w-120 sm:w-100 rounded-t-2xl border-t border-l border-r border-zinc-200 bg-zinc-50/80 p-4 space-y-3">
+              <div className="flex items-start gap-2.5">
+                <Truck size={15} className="mt-0.5 text-orange-500 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-zinc-800">
+                    Shipping complimentary over INR 3000
+                  </p>
+                  <p className="text-sm text-zinc-500">
+                    Free delivery on orders above ₹3,000.
+                  </p>
+                </div>
               </div>
-              <div className="w-px bg-zinc-200 shrink-0" />
-              <div>
-                <span className="text-zinc-400 uppercase tracking-wide text-[12px]">
-                  Category
-                </span>
-                <p className="font-medium text-sm text-zinc-700 mt-0.5">
-                  Accessories
-                </p>
+              <div className="flex items-start gap-2.5">
+                <RotateCcw
+                  size={15}
+                  className="mt-0.5 text-orange-500 shrink-0"
+                />
+                <div>
+                  <p className="text-sm font-medium text-zinc-800">
+                    Return within 7 days
+                  </p>
+                  <p className="text-sm text-zinc-500">
+                    Easy returns and exchanges within 7 days of delivery.
+                  </p>
+                </div>
               </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-1">
-              <button
-                onClick={() => {
-                  handleAddItem({
-                    productId: product._id,
-                    variantId: useDefaultProduct
-                      ? variants[0]?._id
-                      : selectedVariant?._id,
-                  });
-                }}
-                id="btn-add-to-cart"
-                className="flex-1 flex items-center justify-center gap-1.5 border border-orange-500 text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-orange-50 active:scale-[0.98] transition-all cursor-pointer"
-              >
-                <ShoppingCart size={16} />
-                Add to Cart
-              </button>
-              <button
-                id="btn-buy-now"
-                className="flex-1 flex items-center justify-center gap-1.5 bg-orange-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-sm shadow-orange-200/60 hover:bg-orange-600 active:scale-[0.98] transition-all cursor-pointer"
-              >
-                <Zap size={16} />
-                Buy Now
-              </button>
+              <div className="flex items-start gap-2.5">
+                <Shield size={15} className="mt-0.5 text-orange-500 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-zinc-800">
+                    Authenticity 100% guaranteed
+                  </p>
+                  <p className="text-sm text-zinc-500">
+                    Every item is verified and backed by our quality promise.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

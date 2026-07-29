@@ -3,7 +3,7 @@ import cartModel from "../models/cart.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
 
 /**
- * @route POST /api/cart/add/:productId/:variantId
+ * @route POST /api/carts/add/:productId/:variantId
  * @desc Add item to the cart
  * @access Private
  * @arguments productId: ID of the product to add to the cart
@@ -113,7 +113,7 @@ export const addToCart = async (req, res) => {
 };
 
 /**
- * @route GET /api/cart
+ * @route GET /api/carts
  * @desc Get the user's cart
  * @access Private
  */

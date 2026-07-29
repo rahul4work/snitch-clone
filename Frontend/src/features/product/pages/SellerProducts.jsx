@@ -196,7 +196,7 @@ const SellerProducts = () => {
                               </div>
                             </td>
                             <td className="px-5 py-3 text-center">
-                              <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 text-[10px] font-bold uppercase tracking-wider">
+                              <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-md bg-green-50 text-green-600 border border-green-100 text-[10px] font-bold uppercase tracking-wider">
                                 Active
                               </span>
                             </td>

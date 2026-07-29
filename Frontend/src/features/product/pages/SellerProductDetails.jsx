@@ -329,7 +329,7 @@ const SellerProductDetails = () => {
                 {/* Attributes */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Attributes
+                    Attributes (e.g. Size, Color) *
                   </label>
                   <div className="space-y-3 mb-3">
                     {Object.entries(attributes).map(([key, value]) => (
@@ -356,14 +356,14 @@ const SellerProductDetails = () => {
                   <div className="flex gap-3 items-start">
                     <input
                       type="text"
-                      placeholder="e.g. Size"
+                      placeholder="Key (e.g. Size)"
                       value={newAttrKey}
                       onChange={(e) => setNewAttrKey(e.target.value)}
                       className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
                     />
                     <input
                       type="text"
-                      placeholder="e.g. M"
+                      placeholder="Value (e.g. M)"
                       value={newAttrValue}
                       onChange={(e) => setNewAttrValue(e.target.value)}
                       className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
@@ -378,28 +378,10 @@ const SellerProductDetails = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Price */}
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
-                      Variant Price (Optional)
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        {symbol}
-                      </span>
-                      <input
-                        type="number"
-                        placeholder="Base price if empty"
-                        value={priceAmount}
-                        onChange={(e) => setPriceAmount(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-                      />
-                    </div>
-                  </div>
                   {/* Stock */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">
-                      Stock Amount
+                      Initial Stock
                     </label>
                     <input
                       type="number"
@@ -409,13 +391,31 @@ const SellerProductDetails = () => {
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
                     />
                   </div>
+                  {/* Price */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Price Amount (Optional)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                        {symbol}
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="Default if empty"
+                        value={priceAmount}
+                        onChange={(e) => setPriceAmount(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Right Col: Images */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  Variant Images (Max 7)
+                  Upload Images (Max 7, Optional)
                 </label>
 
                 <div className="grid grid-cols-3 gap-3 mb-3">
@@ -485,7 +485,7 @@ const SellerProductDetails = () => {
             >
               <div className="flex gap-6">
                 {/* Thumbnail */}
-                <div className="w-25 shrink-0 overflow-hidden rounded-2xl bg-gray-100 border border-gray-200">
+                <div className="w-25 h-35 shrink-0 overflow-hidden rounded-xl bg-gray-100 border border-gray-200">
                   {variant.images && variant.images.length > 0 ? (
                     <img
                       src={variant.images[0].url}
@@ -493,21 +493,21 @@ const SellerProductDetails = () => {
                       className="w-full h-full object-cover object-top"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                    <div className="w-25 h-35 flex items-center justify-center text-xs text-gray-400">
                       No Image
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col justify-between min-h-28">
+                <div className="flex-1 flex flex-col justify-between min-h-28 py-1">
                   {/* Attributes */}
                   <div className="flex flex-wrap gap-2">
                     {variant.attributes &&
                       Object.entries(variant.attributes).map(([k, v]) => (
                         <span
                           key={k}
-                          className="px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200"
+                          className="px-3 py-1 rounded-md bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200"
                         >
                           {k}: {v}
                         </span>
@@ -515,12 +515,12 @@ const SellerProductDetails = () => {
                   </div>
 
                   {/* Price */}
-                  <div className="mt-3">
+                  <div className="ml-1">
                     <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
                       Price
                     </p>
 
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       {getCurrencySymbol(
                         variant.price?.currency || product.price?.currency,
                       )}
@@ -529,7 +529,7 @@ const SellerProductDetails = () => {
                   </div>
 
                   {/* Stock */}
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="ml-1">
                     <div>
                       <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
                         Current Stock
@@ -539,22 +539,6 @@ const SellerProductDetails = () => {
                         {variant.stock || 0} units
                       </p>
                     </div>
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        Number(variant.stock) > 10
-                          ? "bg-green-100 text-green-700"
-                          : Number(variant.stock) > 0
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {Number(variant.stock) > 10
-                        ? "In Stock"
-                        : Number(variant.stock) > 0
-                          ? "Low Stock"
-                          : "Out of Stock"}
-                    </span>
                   </div>
                 </div>
               </div>
