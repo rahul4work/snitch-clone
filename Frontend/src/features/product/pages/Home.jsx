@@ -23,7 +23,7 @@ import cargos from "../../../assets/cargos.jpeg";
 import polos from "../../../assets/polos.jpeg";
 import shorts from "../../../assets/shorts.jpeg";
 import shoes from "../../../assets/shoes.jpeg";
-import { useProduct } from "../hook/useProduct";
+import useProduct from "../hook/useProduct.js";
 
 const navLinks = ["Faishon", "Accessories", "Perfumes", "Watches", "Shoes"];
 

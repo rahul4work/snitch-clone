@@ -5,23 +5,11 @@ import { setError, setLoading, setUser } from "../state/auth.slice.js";
 const useAuth = () => {
   const dispatch = useDispatch();
 
-  const handleRegister = async ({
-    email,
-    contact,
-    password,
-    fullname,
-    isSeller = false,
-  }) => {
+  const handleRegister = async ({ email, contact, password, fullname, isSeller = false }) => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
-      const data = await register({
-        email,
-        contact,
-        password,
-        fullname,
-        isSeller,
-      });
+      const data = await register({ email, contact, password, fullname, isSeller });
       dispatch(setUser(data.user));
 
       return data.user;

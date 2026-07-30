@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
-import { useProduct } from "../hook/useProduct";
+import useProduct from "../hook/useProduct.js";
 import {
   ChevronLeft,
   ChevronRight,

@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import Navbar from "../components/Navbar.jsx";
-import { useProduct } from "../hook/useProduct.js";
+import useProduct from "../hook/useProduct.js";
 
 const getCurrencySymbol = (currency) => {
   switch (currency) {

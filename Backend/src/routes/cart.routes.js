@@ -6,7 +6,7 @@ import { addToCart, getCart } from "../controllers/cart.controllers.js";
 const router = Router();
 
 /**
- * @route POST /api/carts/add/:productId/:variantId
+ * @route POST /api/cart/add/:productId/:variantId
  * @desc Add item to the cart
  * @access Private
  * @arguments productId: ID of the product to add to the cart
@@ -21,7 +21,7 @@ router.post(
 );
 
 /**
- * @route POST /api/carts/add/:productId
+ * @route POST /api/cart/add/:productId
  * @desc Add item to the cart
  * @access Private
  * @arguments productId: ID of the product to add to the cart
@@ -30,7 +30,7 @@ router.post(
 router.post("/add/:productId", authenticateUser, validateAddToCart, addToCart);
 
 /**
- * @route GET /api/carts
+ * @route GET /api/cart
  * @desc Get the user's cart
  * @access Private
  */

@@ -62,7 +62,7 @@ app.use("/api/auth", authRoutes);
 // product routes
 app.use("/api/products", productRoutes);
 // cart routes
-app.use("/api/carts", cartRoutes);
+app.use("/api/cart", cartRoutes);
 
 // -----------------FRONTEND-----------------
 app.use(express.static(path.join(__dirname, "../dist")));

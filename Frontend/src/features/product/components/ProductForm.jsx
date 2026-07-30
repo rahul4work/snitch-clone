@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { ChevronDown, UploadCloud } from "lucide-react";
-import { useProduct } from "../hook/useProduct.js";
+import useProduct from "../hook/useProduct.js";
 
 const ProductForm = ({ productData, setProductData }) => {
   const { handleCreateProduct } = useProduct();

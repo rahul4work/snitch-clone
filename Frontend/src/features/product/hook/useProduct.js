@@ -10,50 +10,50 @@ import {
 } from "../service/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
 
-export const useProduct = () => {
+const useProduct = () => {
   const dispatch = useDispatch();
 
-  async function handleCreateProduct(formData) {
+  const handleCreateProduct = async (formData) => {
     const data = await createProduct(formData);
 
     return data.product;
-  }
+  };
 
-  async function handleGetSellerProducts() {
+  const handleGetSellerProducts = async () => {
     const data = await getSellerProducts();
     dispatch(setSellerProducts(data.products));
 
     return data.products;
-  }
+  };
 
-  async function handleGetAllProducts() {
+  const handleGetAllProducts = async () => {
     const data = await getAllProducts();
     dispatch(setProducts(data.products));
-  }
+  };
 
-  async function handleDeleteProduct(productId) {
+  const handleDeleteProduct = async (productId) => {
     const data = await deleteProduct(productId);
 
     return data;
-  }
+  };
 
-  async function handleGetProductDetails(productId) {
+  const handleGetProductDetails = async (productId) => {
     const data = await getProductDetails(productId);
 
     return data.product;
-  }
+  };
 
-  async function handleGetSellerProductDetails(productId) {
+  const handleGetSellerProductDetails = async (productId) => {
     const data = await getSellerProductDetails(productId);
 
     return data.product;
-  }
+  };
 
-  async function handleAddProductVariant(productId, newProductVariant) {
+  const handleAddProductVariant = async (productId, newProductVariant) => {
     const data = await addProductVariant(productId, newProductVariant);
 
     return data.product;
-  }
+  };
 
   return {
     handleCreateProduct,
@@ -65,3 +65,5 @@ export const useProduct = () => {
     handleAddProductVariant,
   };
 };
+
+export default useProduct;
