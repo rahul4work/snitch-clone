@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import Navbar from "../components/Navbar.jsx";
+import useCart from "../../cart/hook/useCart.js";
 
 const getCurrencySymbol = (currency) => {
   switch (currency) {
@@ -169,6 +170,8 @@ const ProductDetails = () => {
   const [selectedAttributes, setSelectedAttributes] = useState({});
 
   const { handleGetProductDetails } = useProduct();
+
+  const { handleAddItem } = useCart();
 
   async function fetchProductDetails() {
     try {
@@ -432,7 +435,14 @@ const ProductDetails = () => {
 
             <div className="flex md:w-120 sm:w-100 flex-col gap-4 pt-1 px-1">
               <button
-                onClick={handleAddToCart}
+                onClick={() => {
+                  handleAddItem({
+                    productId: product._id,
+                    variantId: useDefaultProduct
+                      ? variants[0]?._id
+                      : selectedVariant?._id,
+                  });
+                }}
                 id="btn-add-to-cart"
                 className="flex items-center justify-center gap-1.5 border border-orange-500 text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-orange-50 active:scale-[0.98] transition-all cursor-pointer"
               >
