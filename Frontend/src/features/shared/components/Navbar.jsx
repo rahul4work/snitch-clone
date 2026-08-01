@@ -71,7 +71,10 @@ const Navbar = () => {
           </button>
 
           {/* Cart */}
-          <button className="group relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-zinc-100 transition-colors cursor-pointer">
+          <button
+            onClick={() => navigate("/cart")}
+            className="group relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-zinc-100 transition-colors cursor-pointer"
+          >
             <ShoppingCart
               size={19}
               className="text-zinc-700 group-hover:text-black"

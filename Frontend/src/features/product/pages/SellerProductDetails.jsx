@@ -9,7 +9,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../../shared/components/Navbar.jsx";
 import useProduct from "../hook/useProduct.js";
 
 const getCurrencySymbol = (currency) => {
@@ -203,8 +203,6 @@ const SellerProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <Navbar />
-
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Back Button */}
         <div className="flex h-auto items-center pb-6 gap-4">

@@ -11,7 +11,6 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
-import Navbar from "../components/Navbar.jsx";
 import useCart from "../../cart/hook/useCart.js";
 
 const getCurrencySymbol = (currency) => {
@@ -301,8 +300,6 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <Navbar />
-
       <div className="w-full max-w-350 mx-auto px-6 py-10">
         <div className="flex h-auto items-center pb-4 gap-4">
           <button

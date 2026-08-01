@@ -10,7 +10,6 @@ import {
   Tag,
   User,
 } from "lucide-react";
-import Navbar from "../components/Navbar.jsx";
 import useAuth from "../../auth/hook/useAuth.js";
 
 const Profile = () => {
@@ -46,9 +45,6 @@ const Profile = () => {
 
   return (
     <div className="w-full min-h-screen bg-zinc-50">
-      {/* ── Header ── */}
-      <Navbar />
-
       {/* Main Content */}
       <main className="max-w-300 mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">

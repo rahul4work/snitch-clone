@@ -14,11 +14,18 @@ import SellerCustomers from "../features/product/pages/SellerCustomers.jsx";
 import SellerSettings from "../features/product/pages/SellerSettings.jsx";
 import Wishlist from "../features/product/pages/Wishlist.jsx";
 import Profile from "../features/product/pages/Profile.jsx";
+import Cart from "../features/cart/pages/Cart.jsx";
+import AppLayout from "./AppLayout.jsx";
+import SellerLayout from "./SellerLayout.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/product/:productId",
+    element: <ProductDetails />,
   },
   {
     path: "/register",
@@ -37,83 +44,72 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/product/:productId",
-    element: <ProductDetails />,
-  },
-  {
-    path: "/seller",
+    element: <AppLayout />,
     children: [
       {
-        path: "/seller/dashboard",
+        path: "/cart",
         element: (
           <ProtectedRoute>
-            <Dashboard />
+            <Cart />
           </ProtectedRoute>
         ),
       },
       {
-        path: "/seller/create-product",
+        path: "/wishlist",
         element: (
-          <ProtectedRoute role="seller">
-            <CreateProduct />
+          <ProtectedRoute>
+            <Wishlist />
           </ProtectedRoute>
         ),
       },
       {
-        path: "/seller/products",
+        path: "/profile",
         element: (
-          <ProtectedRoute role="seller">
-            <SellerProducts />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/seller/product/:productId",
-        element: (
-          <ProtectedRoute role="seller">
-            <SellerProductDetails />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/seller/orders",
-        element: (
-          <ProtectedRoute role="seller">
-            <SellerOrders />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/seller/customers",
-        element: (
-          <ProtectedRoute role="seller">
-            <SellerCustomers />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/seller/settings",
-        element: (
-          <ProtectedRoute role="seller">
-            <SellerSettings />
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         ),
       },
     ],
   },
   {
-    path: "/wishlist",
     element: (
-      <ProtectedRoute>
-        <Wishlist />
+      <ProtectedRoute role="seller">
+        <SellerLayout />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: "/seller/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/seller/products",
+        element: <SellerProducts />,
+      },
+      {
+        path: "/seller/create-product",
+        element: <CreateProduct />,
+      },
+      {
+        path: "/seller/orders",
+        element: <SellerOrders />,
+      },
+      {
+        path: "/seller/customers",
+        element: <SellerCustomers />,
+      },
+      {
+        path: "/seller/settings",
+        element: <SellerSettings />,
+      },
+    ],
   },
   {
-    path: "/profile",
+    path: "/seller/product/:productId",
     element: (
-      <ProtectedRoute>
-        <Profile />
+      <ProtectedRoute role="seller">
+        <SellerProductDetails />
       </ProtectedRoute>
     ),
   },
