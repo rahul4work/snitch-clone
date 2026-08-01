@@ -5,11 +5,23 @@ import { setError, setLoading, setUser } from "../state/auth.slice.js";
 const useAuth = () => {
   const dispatch = useDispatch();
 
-  const handleRegister = async ({ email, contact, password, fullname, isSeller = false }) => {
+  const handleRegister = async ({
+    email,
+    contact,
+    password,
+    fullname,
+    isSeller = false,
+  }) => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
-      const data = await register({ email, contact, password, fullname, isSeller });
+      const data = await register({
+        email,
+        contact,
+        password,
+        fullname,
+        isSeller,
+      });
       dispatch(setUser(data.user));
 
       return data.user;
@@ -47,7 +59,7 @@ const useAuth = () => {
       dispatch(setError(null));
 
       await logout();
-      
+
       dispatch(setUser(null));
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrorng";
@@ -64,8 +76,14 @@ const useAuth = () => {
       const data = await getMe();
       dispatch(setUser(data.user));
     } catch (error) {
-      const message = error.response?.data?.message || "Something went wrorng";
-      dispatch(setError(message));
+      if (error.response?.status === 401) {
+        dispatch(setUser(null));
+        return;
+      }
+
+      dispatch(
+        setError(error.response?.data?.message || "Something went wrong"),
+      );
     } finally {
       dispatch(setLoading(false));
     }
