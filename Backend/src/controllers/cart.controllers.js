@@ -231,7 +231,7 @@ export const decrementCartItemQuantity = async (req, res) => {
     });
   }
 
-  const cartItem = cart.item.find(
+  const cartItem = cart.items.find(
     (item) =>
       item.product.toString() === productId &&
       item.variant?.toString() === variantId,
@@ -268,5 +268,56 @@ export const decrementCartItemQuantity = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Cart item quantity decremented successfully",
+  });
+};
+
+/**
+ * @route DELETE /api/cart/remove/:productId/:variantId
+ * @desc Remove an item from the cart
+ * @access Private
+ * @arguments productId: ID of the product to remove from the cart
+ * @arguments variantId: ID of the variant to remove from the cart
+ */
+export const removeCartItem = async (req, res) => {
+  const { productId, variantId } = req.params;
+
+  const cart = await cartModel.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return res.status(404).json({
+      success: false,
+      message: "Cart not found",
+    });
+  }
+
+  const cartItem = cart.items.find(
+    (item) =>
+      item.product.toString() === productId &&
+      item.variant?.toString() === variantId,
+  );
+
+  if (!cartItem) {
+    return res.status(404).json({
+      success: false,
+      message: "Item not found in cart",
+    });
+  }
+
+  await cartModel.findOneAndUpdate(
+    { user: req.user._id },
+    {
+      $pull: {
+        items: {
+          product: productId,
+          variant: variantId,
+        },
+      },
+    },
+    { new: true },
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Item removed from cart successfully",
   });
 };

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticateUser } from "../middlewares/auth.middlewares.js";
 import {
   validateAddToCart,
+  validateRemoveCartItem,
   validateUpdateCartItemQuantity,
 } from "../validators/cart.validators.js";
 import {
@@ -9,6 +10,7 @@ import {
   decrementCartItemQuantity,
   getCart,
   incrementCartItemQuantity,
+  removeCartItem,
 } from "../controllers/cart.controllers.js";
 
 const router = Router();
@@ -61,6 +63,20 @@ router.patch(
   authenticateUser,
   validateUpdateCartItemQuantity,
   decrementCartItemQuantity,
+);
+
+/**
+ * @route DELETE /api/cart/delete/:productId/:variantId
+ * @desc Remove an item from the cart
+ * @access Private
+ * @arguments productId: ID of the product to remove an item from the cart
+ * @arguments variantId: ID of the variant of the product to remove an item from the cart
+ */
+router.delete(
+  "/remove/:productId/:variantId",
+  authenticateUser,
+  validateRemoveCartItem,
+  removeCartItem,
 );
 
 export default router;

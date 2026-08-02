@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ArrowRight, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import useCart from "../hook/useCart.js";
 
 const Cart = () => {
-  const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const productMap = useSelector((state) => state.product.productsById);
-  const { handleGetCart, handleIncrementCartItem } = useCart();
+  const {
+    handleGetCart,
+    handleIncrementCartItem,
+    handleDecrementCartItem,
+    handleRemoveCartItem,
+  } = useCart();
 
   useEffect(() => {
     handleGetCart();
@@ -57,18 +61,6 @@ const Cart = () => {
     return attributeEntries.length > 0
       ? attributeEntries.map(([key, value]) => `${key}: ${value}`).join(" • ")
       : "Default variant";
-  };
-
-  const handleQuantityChange = (item, delta) => {
-    const itemId = getItemId(item);
-    const nextQuantity = (item.quantity || 1) + delta;
-
-    if (nextQuantity <= 0) {
-      dispatch(removeItem(itemId));
-      return;
-    }
-
-    dispatch(updateQuantity({ itemId, quantity: nextQuantity }));
   };
 
   if (!cartItems || cartItems.length === 0) {
@@ -123,8 +115,18 @@ const Cart = () => {
                 product?.price?.amount ??
                 0;
               const stockValue = Number(variant?.stock ?? product?.stock ?? 0);
+              const remainingStock = Math.max(
+                stockValue - (item.quantity || 1),
+                0,
+              );
               const stockLabel =
-                stockValue > 0 ? `${stockValue} in stock` : "Out of stock";
+                stockValue > 0 ? `${remainingStock} left` : "Out of stock";
+              const stockBadgeClass =
+                remainingStock <= 0
+                  ? "bg-red-100 text-red-600"
+                  : remainingStock <= 2
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-zinc-100 text-zinc-600";
               const itemImage =
                 variant?.images?.[0]?.url ||
                 product?.images?.[0]?.url ||
@@ -163,7 +165,9 @@ const Cart = () => {
                         <span className="text-zinc-500">
                           {getVariantLabel(item)}
                         </span>
-                        <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600">
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium ${stockBadgeClass}`}
+                        >
                           {stockLabel}
                         </span>
                       </div>
@@ -173,7 +177,9 @@ const Cart = () => {
                       <div className="flex items-center border border-zinc-200 rounded-md bg-white">
                         <button
                           type="button"
-                          onClick={() => handleQuantityChange(item, -1)}
+                          onClick={() =>
+                            handleDecrementCartItem({ productId, variantId })
+                          }
                           className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-l-md transition-colors cursor-pointer"
                           aria-label="Decrease quantity"
                         >
@@ -196,7 +202,9 @@ const Cart = () => {
 
                       <button
                         type="button"
-                        onClick={() => dispatch(removeItem(itemId))}
+                        onClick={() =>
+                          handleRemoveCartItem({ productId, variantId })
+                        }
                         className="flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-red-500 transition-colors cursor-pointer group"
                       >
                         <Trash2
