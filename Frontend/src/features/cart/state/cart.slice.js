@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const getItemId = (item) =>
+  item?._id || `${item?.product ?? "product"}-${item?.variant ?? "default"}`;
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -12,9 +15,20 @@ const cartSlice = createSlice({
     addItem: (state, action) => {
       state.items.push(action.payload);
     },
+    incrementCartItem: (state, action) => {
+      const { productId, variantId } = action.payload;
+
+      state.items = state.items.map((item) => {
+        if (item.product._id === productId && item.variant === variantId) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          return item;
+        }
+      });
+    },
   },
 });
 
-export const { setItems, addItem } = cartSlice.actions;
+export const { setItems, addItem, incrementCartItem } = cartSlice.actions;
 
 export default cartSlice.reducer;

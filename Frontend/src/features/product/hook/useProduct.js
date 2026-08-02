@@ -8,7 +8,11 @@ import {
   getSellerProductDetails,
   getSellerProducts,
 } from "../service/product.api.js";
-import { setProducts, setSellerProducts } from "../state/product.slice.js";
+import {
+  setCurrentProduct,
+  setProducts,
+  setSellerProducts,
+} from "../state/product.slice.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
@@ -39,6 +43,7 @@ const useProduct = () => {
 
   const handleGetProductDetails = async (productId) => {
     const data = await getProductDetails(productId);
+    dispatch(setCurrentProduct(data.product));
 
     return data.product;
   };

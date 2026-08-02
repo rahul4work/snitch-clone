@@ -20,3 +20,15 @@ export const getCart = async () => {
 
   return response.data;
 };
+
+export const incrementCartItemApi = async ({ productId, variantId }) => {
+  const url = `/quantity/increment/${productId}/${variantId}`;
+  const response = await cartApiInstance.patch(url);
+  return response.data;
+};
+
+export const decrementCartItemApi = async ({ productId, variantId }) => {
+  const url = `/quantity/decrement/${productId}/${variantId}`;
+  const response = await cartApiInstance.patch(url);
+  return response.data;
+};

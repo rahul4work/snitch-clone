@@ -136,3 +136,137 @@ export const getCart = async (req, res) => {
     cart,
   });
 };
+
+/**
+ * @route PATCH /api/cart/quantity/increment/:productId/:variantId
+ * @desc Increment the quantity of an item in the cart by one
+ * @access Private
+ * @arguments productId: ID of the product to increment the item in the cart
+ * @arguments variantId: ID of the variant of the product to increment the item in the cart
+ */
+export const incrementCartItemQuantity = async (req, res) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product or variant not found",
+    });
+  }
+
+  const cart = await cartModel.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return res.status(404).json({
+      success: false,
+      message: "Cart not found",
+    });
+  }
+
+  const stock = await stockOfVariant(productId, variantId);
+
+  const itemQuantityInCart =
+    cart.items.find(
+      (item) =>
+        item.product.toString() === productId &&
+        item.variant?.toString() === variantId,
+    )?.quantity || 0;
+
+  if (itemQuantityInCart + 1 > stock) {
+    return res.status(400).json({
+      success: false,
+      message: `Only ${stock} items left in stock, and you already have ${itemQuantityInCart} items in your cart`,
+    });
+  }
+
+  await cartModel.findOneAndUpdate(
+    {
+      user: req.user._id,
+      "items.product": productId,
+      "items.variant": variantId,
+    },
+    { $inc: { "items.$.quantity": 1 } },
+    { new: true },
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Cart item quantity incremented successfully",
+  });
+};
+
+/**
+ * @route PATCH /api/cart/quantity/decrement/:productId/:variantId
+ * @desc Decrement the quantity of an item in the cart by one
+ * @access Private
+ * @arguments productId: ID of the product to decrement the item in the cart
+ * @arguments variantId: ID of the variant of the product to decrement the item in the cart
+ */
+export const decrementCartItemQuantity = async (req, res) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product or variant not found",
+    });
+  }
+
+  const cart = await cartModel.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return res.status(404).json({
+      success: false,
+      message: "Cart not found",
+    });
+  }
+
+  const cartItem = cart.item.find(
+    (item) =>
+      item.product.toString() === productId &&
+      item.variant?.toString() === variantId,
+  );
+
+  if (!cartItem) {
+    return res.status(404).json({
+      success: false,
+      message: "Item not found in cart",
+    });
+  }
+
+  if (cartItem.quantity <= 1) {
+    return res.status(400).json({
+      success: false,
+      message: "Quantity cannot be less than 1",
+    });
+  }
+
+  await cartModel.findOneAndUpdate(
+    {
+      user: req.user._id,
+      "items.product": productId,
+      "items.variant": variantId,
+    },
+    {
+      $inc: {
+        "items.$.quantity": -1,
+      },
+    },
+    { new: true },
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Cart item quantity decremented successfully",
+  });
+};

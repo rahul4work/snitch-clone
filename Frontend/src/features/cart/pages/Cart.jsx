@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ArrowRight, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
-import Logo from "../../../assets/Logo.png";
-import Navbar from "../../shared/components/Navbar.jsx";
 import useCart from "../hook/useCart.js";
 
 const Cart = () => {
+  const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
-  const { handleGetCart } = useCart();
+  const productMap = useSelector((state) => state.product.productsById);
+  const { handleGetCart, handleIncrementCartItem } = useCart();
 
   useEffect(() => {
     handleGetCart();
@@ -21,6 +21,55 @@ const Cart = () => {
 
   const shipping = subtotal > 1000 ? 0 : 99;
   const total = subtotal + shipping;
+
+  const getProductId = (item) => item?.product?._id || item?.product;
+
+  const getVariantId = (item) => item?.variant?._id || item?.variant;
+
+  const getItemId = (item) =>
+    item?._id ||
+    `${item?.product?._id || "product"}-${item?.variant || "default"}`;
+
+  const normalizeAttributes = (attributes) => {
+    if (!attributes) return {};
+    if (attributes instanceof Map) {
+      return Object.fromEntries(attributes);
+    }
+    if (attributes?.toJSON && typeof attributes.toJSON === "function") {
+      return attributes.toJSON();
+    }
+    return attributes;
+  };
+
+  const getVariantLabel = (item) => {
+    const product = productMap[item?.product?._id] || item.product;
+    const variant = product?.variants?.find((variantItem) => {
+      return variantItem._id === item.variant;
+    });
+
+    if (!variant?.attributes) {
+      return "Default variant";
+    }
+
+    const attributeEntries = Object.entries(
+      normalizeAttributes(variant.attributes),
+    );
+    return attributeEntries.length > 0
+      ? attributeEntries.map(([key, value]) => `${key}: ${value}`).join(" • ")
+      : "Default variant";
+  };
+
+  const handleQuantityChange = (item, delta) => {
+    const itemId = getItemId(item);
+    const nextQuantity = (item.quantity || 1) + delta;
+
+    if (nextQuantity <= 0) {
+      dispatch(removeItem(itemId));
+      return;
+    }
+
+    dispatch(updateQuantity({ itemId, quantity: nextQuantity }));
+  };
 
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -60,77 +109,107 @@ const Cart = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-start">
           {/* Cart Items */}
           <div className="lg:col-span-8 flex flex-col gap-4">
-            {cartItems.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white border border-zinc-200 shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center"
-              >
-                <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden border border-zinc-100 bg-zinc-50">
-                  <img
-                    src={
-                      item.product?.images?.[0]?.url ||
-                      "https://via.placeholder.com/150"
-                    }
-                    alt={item.product?.title}
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
+            {cartItems.map((item) => {
+              const itemId = getItemId(item);
+              const productId = getProductId(item);
+              const variantId = getVariantId(item);
+              const product = productMap[item?.product?._id] || item.product;
+              const variant = product?.variants?.find((variantItem) => {
+                return variantItem._id === item.variant;
+              });
+              const displayPrice =
+                variant?.price?.amount ??
+                item.price?.amount ??
+                product?.price?.amount ??
+                0;
+              const stockValue = Number(variant?.stock ?? product?.stock ?? 0);
+              const stockLabel =
+                stockValue > 0 ? `${stockValue} in stock` : "Out of stock";
+              const itemImage =
+                variant?.images?.[0]?.url ||
+                product?.images?.[0]?.url ||
+                item.product?.images?.[0]?.url ||
+                "https://via.placeholder.com/150";
 
-                <div className="flex-1 flex flex-col w-full h-full justify-between gap-4">
-                  <div>
-                    <div className="flex justify-between items-start gap-4">
-                      <h3 className="text-base sm:text-lg font-semibold text-zinc-900 leading-snug">
-                        <Link
-                          to={`/product/${item.product?._id}`}
-                          className="hover:text-orange-500 transition-colors"
+              return (
+                <div
+                  key={itemId}
+                  className="bg-white border border-zinc-200 shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center"
+                >
+                  <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32 overflow-hidden border border-zinc-100 bg-zinc-50">
+                    <img
+                      src={itemImage}
+                      alt={product?.title || item.product?.title}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+
+                  <div className="flex-1 flex flex-col w-full h-full justify-between gap-4">
+                    <div>
+                      <div className="flex justify-between items-start gap-4">
+                        <h3 className="text-base sm:text-lg font-semibold text-zinc-900 leading-snug">
+                          <Link
+                            to={`/product/${product?._id || item.product?._id}`}
+                            className="hover:text-orange-500 transition-colors"
+                          >
+                            {product?.title || item.product?.title}
+                          </Link>
+                        </h3>
+                        <p className="text-lg font-bold text-zinc-900 shrink-0">
+                          ₹{displayPrice?.toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                        <span className="text-zinc-500">
+                          {getVariantLabel(item)}
+                        </span>
+                        <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600">
+                          {stockLabel}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center border border-zinc-200 rounded-md bg-white">
+                        <button
+                          type="button"
+                          onClick={() => handleQuantityChange(item, -1)}
+                          className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-l-md transition-colors cursor-pointer"
+                          aria-label="Decrease quantity"
                         >
-                          {item.product?.title}
-                        </Link>
-                      </h3>
-                      <p className="text-lg font-bold text-zinc-900 shrink-0">
-                        ₹{item.price?.amount?.toLocaleString("en-IN")}
-                      </p>
-                    </div>
-                    <p className="mt-1 text-sm text-zinc-500 line-clamp-2 leading-relaxed">
-                      {item.product?.description}
-                    </p>
-                  </div>
+                          <Minus size={14} />
+                        </button>
+                        <span className="w-10 text-center text-sm font-medium text-zinc-900">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleIncrementCartItem({ productId, variantId })
+                          }
+                          className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-r-md transition-colors cursor-pointer"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
 
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center border border-zinc-200 rounded-md bg-white">
                       <button
                         type="button"
-                        className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-l-md transition-colors cursor-pointer"
-                        aria-label="Decrease quantity"
+                        onClick={() => dispatch(removeItem(itemId))}
+                        className="flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-red-500 transition-colors cursor-pointer group"
                       >
-                        <Minus size={14} />
-                      </button>
-                      <span className="w-10 text-center text-sm font-medium text-zinc-900">
-                        {item.quantity}
-                      </span>
-                      <button
-                        type="button"
-                        className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-r-md transition-colors cursor-pointer"
-                        aria-label="Increase quantity"
-                      >
-                        <Plus size={14} />
+                        <Trash2
+                          size={16}
+                          className="group-hover:stroke-red-500 transition-colors"
+                        />
+                        <span>Remove</span>
                       </button>
                     </div>
-
-                    <button
-                      type="button"
-                      className="flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-red-500 transition-colors cursor-pointer group"
-                    >
-                      <Trash2
-                        size={16}
-                        className="group-hover:stroke-red-500 transition-colors"
-                      />
-                      <span>Remove</span>
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Order Summary */}

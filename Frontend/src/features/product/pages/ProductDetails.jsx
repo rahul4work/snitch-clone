@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router";
 import useProduct from "../hook/useProduct.js";
 import {
   ChevronLeft,
@@ -12,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import useCart from "../../cart/hook/useCart.js";
+import { setCurrentProduct } from "../state/product.slice.js";
 
 const getCurrencySymbol = (currency) => {
   switch (currency) {
@@ -167,7 +169,11 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [useDefaultProduct, setUseDefaultProduct] = useState(true);
   const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [cartMessage, setCartMessage] = useState("");
+  const [cartButtonLabel, setCartButtonLabel] = useState("Add to Cart");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { handleGetProductDetails } = useProduct();
 
   const { handleAddItem } = useCart();
@@ -176,7 +182,9 @@ const ProductDetails = () => {
     try {
       setLoading(true);
       const data = await handleGetProductDetails(productId);
-      setProduct(normalizeProductForUI(data?.product || data));
+      const normalizedProduct = normalizeProductForUI(data?.product || data);
+      setProduct(normalizedProduct);
+      dispatch(setCurrentProduct(normalizedProduct));
     } catch (error) {
       console.log("Failed to fetch product details", error);
     } finally {
@@ -223,6 +231,8 @@ const ProductDetails = () => {
   }, [useDefaultProduct, selectedVariant, product?.images]);
 
   const stock = useDefaultProduct ? null : Number(selectedVariant?.stock ?? 0);
+  const isAddToCartDisabled =
+    variants.length > 0 && (useDefaultProduct || !selectedVariant);
 
   const handleSelectAttribute = (attrKey, value) => {
     setUseDefaultProduct(false);
@@ -255,15 +265,26 @@ const ProductDetails = () => {
     setSelectedImage(0);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (isAddToCartDisabled) return;
+
     const selectedVariantId = useDefaultProduct
       ? variants[0]?._id
       : selectedVariant?._id;
 
-    console.log("Add to cart", {
-      productId: product?._id,
+    const result = await handleAddItem({
+      productId: product._id,
       variantId: selectedVariantId,
     });
+
+    if (result?.success) {
+      setCartMessage("Added to cart successfully");
+      setCartButtonLabel("Go to Cart");
+
+      window.setTimeout(() => {
+        setCartMessage("");
+      }, 2000);
+    }
   };
 
   const handlePrevImage = () => {
@@ -431,20 +452,33 @@ const ProductDetails = () => {
             )}
 
             <div className="flex md:w-120 sm:w-100 flex-col gap-4 pt-1 px-1">
+              {cartMessage && (
+                <p className="text-sm text-emerald-600 font-medium">
+                  {cartMessage}
+                </p>
+              )}
+
               <button
                 onClick={() => {
-                  handleAddItem({
-                    productId: product._id,
-                    variantId: useDefaultProduct
-                      ? variants[0]?._id
-                      : selectedVariant?._id,
-                  });
+                  if (cartButtonLabel === "Go to Cart") {
+                    navigate("/cart");
+                    return;
+                  }
+
+                  handleAddToCart();
                 }}
+                disabled={
+                  isAddToCartDisabled && cartButtonLabel !== "Go to Cart"
+                }
                 id="btn-add-to-cart"
-                className="flex items-center justify-center gap-1.5 border border-orange-500 text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-orange-50 active:scale-[0.98] transition-all cursor-pointer"
+                className={`flex items-center justify-center gap-1.5 border border-orange-500 text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg transition-all ${
+                  isAddToCartDisabled
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:bg-orange-50 active:scale-[0.98] cursor-pointer"
+                }`}
               >
                 <ShoppingCart size={16} />
-                Add to Cart
+                {cartButtonLabel}
               </button>
 
               <button
