@@ -82,26 +82,6 @@ const Home = () => {
 
   return (
     <div id="main-div" className="w-full min-h-screen bg-white">
-      {/* ── Announcement Bar ── */}
-      <div className="bg-black py-2 overflow-hidden">
-        <div className="marquee-track whitespace-nowrap text-xs tracking-[0.2em] uppercase text-white font-medium">
-          <span className="mx-10">Free Shipping On Orders Above ₹999</span>
-          <span className="mx-10">
-            Use Code <span className="text-orange-400">SNITCH10</span> For 10%
-            Off
-          </span>
-          <span className="mx-10">New Summer Collection Live Now</span>
-          <span className="mx-10">Free Shipping On Orders Above ₹999</span>
-          <span className="mx-10">
-            Use Code <span className="text-orange-400">SNITCH10</span> For 10%
-            Off
-          </span>
-          <span className="mx-10">New Summer Collection Live Now</span>
-        </div>
-      </div>
-
-      <Navbar />
-
       {/* Main Content */}
       <main className="w-full h-full">
         <div className="max-w-350 mx-auto h-full relative">

@@ -1,7 +1,14 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router";
 import { useSelector } from "react-redux";
-import { ArrowRight, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
 import useCart from "../hook/useCart.js";
 
 const Cart = () => {
@@ -93,10 +100,32 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-zinc-50">
       <div className="w-full max-w-350 mx-auto px-6 py-10">
-        <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-8">
-          Shopping Cart ({cartItems.length}{" "}
-          {cartItems.length === 1 ? "item" : "items"})
-        </h1>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center gap-1 text-sm text-zinc-800 hover:text-orange-500 transition-colors cursor-pointer"
+            >
+              <ChevronLeft size={18} />
+              Back
+            </button>
+
+            <span className="text-zinc-300">|</span>
+
+            <p className="uppercase tracking-[0.25em] text-md font-semibold text-orange-500">
+              Shopping Cart
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center bg-orange-50 border border-orange-100 rounded-md px-2.5 py-0.5">
+            <span className="text-sm font-bold text-orange-500 flex items-center gap-1">
+              {cartItems.length}
+              <span className="text-xs uppercase tracking-wider text-zinc-500">
+                {cartItems.length === 1 ? "Item" : "Items"}
+              </span>
+            </span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-start">
           {/* Cart Items */}

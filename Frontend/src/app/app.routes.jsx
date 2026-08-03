@@ -20,14 +20,6 @@ import SellerLayout from "./SellerLayout.jsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/product/:productId",
-    element: <ProductDetails />,
-  },
-  {
     path: "/register",
     element: (
       <PublicRoute>
@@ -46,6 +38,22 @@ const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/product/:productId",
+        element: <ProductDetails />,
+      },
+      {
+        path: "/seller/product/:productId",
+        element: (
+          <ProtectedRoute role="seller">
+            <SellerProductDetails />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "/cart",
         element: (
@@ -104,14 +112,6 @@ const router = createBrowserRouter([
         element: <SellerSettings />,
       },
     ],
-  },
-  {
-    path: "/seller/product/:productId",
-    element: (
-      <ProtectedRoute role="seller">
-        <SellerProductDetails />
-      </ProtectedRoute>
-    ),
   },
 ]);
 
