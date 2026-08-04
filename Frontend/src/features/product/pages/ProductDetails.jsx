@@ -174,6 +174,7 @@ const ProductDetails = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const { handleGetProductDetails } = useProduct();
 
   const { handleAddItem } = useCart();

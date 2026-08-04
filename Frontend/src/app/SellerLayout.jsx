@@ -1,5 +1,5 @@
 import React from "react";
-import SideNavBar from "../features/product/components/SideNavBar";
+import SideNavBar from "../features/product/components/SideNavBar.jsx";
 import { Outlet } from "react-router";
 
 const SellerLayout = () => {
