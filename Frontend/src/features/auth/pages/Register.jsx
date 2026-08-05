@@ -15,7 +15,7 @@ const Register = () => {
 
   const dispatch = useDispatch();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { authRequestLoading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     fullname: "",
@@ -254,7 +254,7 @@ const Register = () => {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={authRequestLoading}
                 className="
                   w-full
                   h-12
@@ -274,7 +274,7 @@ const Register = () => {
                   gap-2
                 "
               >
-                {loading ? (
+                {authRequestLoading ? (
                   <>
                     <div
                       className="

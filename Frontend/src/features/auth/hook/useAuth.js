@@ -1,13 +1,13 @@
 import { useDispatch } from "react-redux";
 import { getMe, login, logout, register } from "../service/auth.api.js";
-import { setError, setErrorCode, setLoading, setUser } from "../state/auth.slice.js";
+import { setError, setErrorCode, setLoading, setAuthRequestLoading, setUser } from "../state/auth.slice.js";
 
 const useAuth = () => {
   const dispatch = useDispatch();
 
   const handleRegister = async ({ email, contact, password, fullname, isSeller = false }) => {
     try {
-      dispatch(setLoading(true));
+      dispatch(setAuthRequestLoading(true));
       dispatch(setError(null));
       dispatch(setErrorCode(null));
 
@@ -25,13 +25,13 @@ const useAuth = () => {
 
       throw error;
     } finally {
-      dispatch(setLoading(false));
+      dispatch(setAuthRequestLoading(false));
     }
   };
 
   const handleLogin = async ({ email, password }) => {
     try {
-      dispatch(setLoading(true));
+      dispatch(setAuthRequestLoading(true));
       dispatch(setError(null));
       dispatch(setErrorCode(null));
 
@@ -49,7 +49,7 @@ const useAuth = () => {
 
       throw error;
     } finally {
-      dispatch(setLoading(false));
+      dispatch(setAuthRequestLoading(false));
     }
   };
 
@@ -80,7 +80,7 @@ const useAuth = () => {
 
     try {
       const data = await getMe();
-      
+
       dispatch(setUser(data.user));
     } catch (error) {
       const code = error.response?.data?.code;

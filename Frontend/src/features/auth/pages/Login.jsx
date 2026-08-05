@@ -15,7 +15,7 @@ const Login = () => {
 
   const dispatch = useDispatch();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { authRequestLoading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -199,7 +199,7 @@ const Login = () => {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={authRequestLoading}
                 className="
                   w-full
                   h-12
@@ -219,7 +219,7 @@ const Login = () => {
                   gap-2
                 "
               >
-                {loading ? (
+                {authRequestLoading ? (
                   <>
                     <div
                       className="
