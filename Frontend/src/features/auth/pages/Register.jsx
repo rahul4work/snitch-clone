@@ -6,7 +6,7 @@ import ImageSection from "../components/ImageSection.jsx";
 import useAuth from "../hook/useAuth.js";
 import { useDispatch, useSelector } from "react-redux";
 import { CircleAlert, Eye, EyeOff } from "lucide-react";
-import { setError } from "../state/auth.slice.js";
+import { setError, setErrorCode } from "../state/auth.slice.js";
 
 const Register = () => {
   const { handleRegister } = useAuth();
@@ -33,6 +33,7 @@ const Register = () => {
 
     const timer = setTimeout(() => {
       dispatch(setError(null));
+      dispatch(setErrorCode(null));
     }, 4000);
 
     return () => clearTimeout(timer);
@@ -87,9 +88,12 @@ const Register = () => {
 
     if (!validateForm()) return;
 
-    await handleRegister(formData);
-
-    navigate("/");
+    try {
+      await handleRegister(formData);
+      navigate("/");
+    } catch {
+      // Error is already handled in useAuth
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -283,10 +287,10 @@ const Register = () => {
                         animate-spin
                       "
                     />
-                    Signing In...
+                    Creating Account...
                   </>
                 ) : (
-                  "Sign In"
+                  "Create Account"
                 )}
               </button>
             </form>

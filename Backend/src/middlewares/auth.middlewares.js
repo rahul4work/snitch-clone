@@ -8,6 +8,7 @@ export const authenticateUser = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
+      code: "UNAUTHORIZED",
       message: "Unauthorized",
     });
   }
@@ -20,6 +21,7 @@ export const authenticateUser = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
+        code: "UNAUTHORIZED",
         message: "Unauthorized",
       });
     }
@@ -28,10 +30,10 @@ export const authenticateUser = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
+      code: "TOKEN_EXPIRED",
       message: "Invalid or expired token",
-      error: error.message,
     });
   }
 };
@@ -42,6 +44,7 @@ export const authenticateSeller = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
+      code: "UNAUTHORIZED",
       message: "Unauthorized",
     });
   }
@@ -54,14 +57,16 @@ export const authenticateSeller = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
+        code: "UNAUTHORIZED",
         message: "Unauthorized",
       });
     }
 
     if (user.role !== "seller") {
       return res.status(403).json({
-        message: "Forbidden",
         success: false,
+        code: "FORBIDDEN",
+        message: "Forbidden",
       });
     }
 
@@ -69,10 +74,10 @@ export const authenticateSeller = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
+      code: "TOKEN_EXPIRED",
       message: "Invalid or expired token",
-      error: error.message,
     });
   }
 };

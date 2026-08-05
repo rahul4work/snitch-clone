@@ -1,32 +1,26 @@
 import { useDispatch } from "react-redux";
 import { getMe, login, logout, register } from "../service/auth.api.js";
-import { setError, setLoading, setUser } from "../state/auth.slice.js";
+import { setError, setErrorCode, setLoading, setUser } from "../state/auth.slice.js";
 
 const useAuth = () => {
   const dispatch = useDispatch();
 
-  const handleRegister = async ({
-    email,
-    contact,
-    password,
-    fullname,
-    isSeller = false,
-  }) => {
+  const handleRegister = async ({ email, contact, password, fullname, isSeller = false }) => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
-      const data = await register({
-        email,
-        contact,
-        password,
-        fullname,
-        isSeller,
-      });
+      dispatch(setErrorCode(null));
+
+      const data = await register({ email, contact, password, fullname, isSeller });
+
       dispatch(setUser(data.user));
 
       return data.user;
     } catch (error) {
+      const code = error.response?.data?.code || "UNKNOWN_ERROR";
       const message = error.response?.data?.message || "Something went wrong";
+
+      dispatch(setErrorCode(code));
       dispatch(setError(message));
 
       throw error;
@@ -39,12 +33,18 @@ const useAuth = () => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
+      dispatch(setErrorCode(null));
+
       const data = await login({ email, password });
+
       dispatch(setUser(data.user));
 
       return data.user;
     } catch (error) {
+      const code = error.response?.data?.code || "UNKNOWN_ERROR";
       const message = error.response?.data?.message || "Something went wrong";
+      
+      dispatch(setErrorCode(code));
       dispatch(setError(message));
 
       throw error;
@@ -57,12 +57,16 @@ const useAuth = () => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(null));
+      dispatch(setErrorCode(null));
 
       await logout();
 
       dispatch(setUser(null));
     } catch (error) {
-      const message = error.response?.data?.message || "Something went wrorng";
+      const code = error.response?.data?.code || "UNKNOWN_ERROR";
+      const message = error.response?.data?.message || "Something went wrong";
+
+      dispatch(setErrorCode(code));
       dispatch(setError(message));
     } finally {
       dispatch(setLoading(false));
@@ -70,25 +74,31 @@ const useAuth = () => {
   };
 
   const handleGetMe = async () => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    dispatch(setErrorCode(null));
+
     try {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
       const data = await getMe();
+      
       dispatch(setUser(data.user));
     } catch (error) {
-      if (error.response?.status === 401) {
+      const code = error.response?.data?.code;
+      const message = error.response?.data?.message || "Something went wrong";
+
+      if (code === "UNAUTHORIZED" || code === "TOKEN_EXPIRED") {
         dispatch(setUser(null));
+        dispatch(setError(null));
+        dispatch(setErrorCode(null));
         return;
       }
 
-      dispatch(
-        setError(error.response?.data?.message || "Something went wrong"),
-      );
+      dispatch(setErrorCode(code || "UNKNOWN_ERROR"));
+      dispatch(setError(message));
     } finally {
       dispatch(setLoading(false));
     }
   };
-
   return { handleRegister, handleLogin, handleLogout, handleGetMe };
 };
 

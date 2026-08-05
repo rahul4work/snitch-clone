@@ -43,6 +43,7 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res.status(401).json({
         success: false,
+        code:"USER_ALREADY_EXISTS",
         message: "User with this email or contact already exists",
         error: "User already exists",
       });
@@ -60,8 +61,8 @@ export const register = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message,
+      code:"INTERNAL_SERVER_ERROR",
+      message: "Something went wrong. Please try again later.",
     });
   }
 };
@@ -80,6 +81,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
+        code:"USER_NOT_FOUND",
         message: "No account found with this email. Please register first.",
         error: "Invalid Credentials. User not found",
       });
@@ -90,6 +92,7 @@ export const login = async (req, res) => {
     if (!matchPasseord) {
       return res.status(401).json({
         success: false,
+        code:"INVALID_PASSWORD",
         message: "Incorrect password. Please try again.",
         error: "Invalid Credentials. Incorrect Password",
       });
@@ -99,8 +102,8 @@ export const login = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message,
+      code:"INTERNAL_SERVER_ERROR",
+      message: "Something went wrong. Please try again later.",
     });
   }
 };

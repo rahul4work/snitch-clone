@@ -5,7 +5,7 @@ import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import TitleLogo from "../components/TitleLogo.jsx";
 import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 import ImageSection from "../components/ImageSection.jsx";
-import { setError } from "../state/auth.slice.js";
+import { setError, setErrorCode } from "../state/auth.slice.js";
 import useAuth from "../hook/useAuth.js";
 
 const Login = () => {
@@ -30,6 +30,7 @@ const Login = () => {
 
     const timer = setTimeout(() => {
       dispatch(setError(null));
+      dispatch(setErrorCode(null));
     }, 4000);
 
     return () => clearTimeout(timer);
