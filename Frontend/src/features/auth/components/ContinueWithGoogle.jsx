@@ -1,14 +1,64 @@
+import { useState } from "react";
 import googleLogo from "../../../assets/google.svg";
 
 const ContinueWithGoogle = ({ onClick }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = () => {
+    setLoading(true);
+    onClick();
+  };
+
   return (
     <button
       type="button"
-      onClick={onClick}
-      className="w-full h-12 border border-gray-300 rounded-xl bg-white hover:bg-gray-50 flex items-center justify-center gap-3 transition cursor-pointer"
+      onClick={handleClick}
+      disabled={loading}
+      className="
+        w-full
+        h-12
+        border
+        border-gray-300
+        rounded-xl
+        bg-white
+        hover:bg-gray-50
+        active:scale-[0.98]
+        disabled:cursor-not-allowed
+        disabled:opacity-70
+        flex
+        items-center
+        justify-center
+        gap-3
+        transition-all
+        duration-150
+        cursor-pointer
+      "
     >
-      <img src={googleLogo} alt="Google" className="w-5 h-5" />
-      <span className="font-medium text-gray-700">Continue with Google</span>
+      {loading ? (
+        <>
+          <div
+            className="
+              h-5
+              w-5
+              rounded-full
+              border-2
+              border-gray-500
+              border-t-transparent
+              animate-spin
+            "
+          />
+          <span className="font-medium text-gray-700">
+            Continuing...
+          </span>
+        </>
+      ) : (
+        <>
+          <img src={googleLogo} alt="Google" className="w-5 h-5" />
+          <span className="font-medium text-gray-700">
+            Continue with Google
+          </span>
+        </>
+      )}
     </button>
   );
 };

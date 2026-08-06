@@ -206,13 +206,16 @@ const Login = () => {
                   rounded-xl
                   bg-orange-500
                   hover:bg-orange-600
+                  active:scale-[0.98]
+                  active:bg-orange-700
                   cursor-pointer
                   disabled:opacity-70
                   disabled:cursor-not-allowed
+                  disabled:active:scale-100
                   text-white
                   font-semibold
                   transition-all
-                  duration-200
+                  duration-150
                   flex
                   items-center
                   justify-center

@@ -41,7 +41,9 @@ export const validateRegisterUser = [
     .matches(/[a-z]/)
     .withMessage("Password must contain at least one lowercase letter")
     .matches(/[0-9]/)
-    .withMessage("Password must contain at least one number"),
+    .withMessage("Password must contain at least one number")
+    .matches(/[!@#$%^&*(),.?":{}|<>_\-[\]\\/~`+=;']/)
+    .withMessage("Password must contain at least one special character"),
 
   body("fullname")
     .trim()

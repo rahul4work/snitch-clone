@@ -56,26 +56,46 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Full Name
     if (!formData.fullname.trim()) {
       newErrors.fullname = "Full name is required";
+    } else if (
+      formData.fullname.trim().length < 3 ||
+      formData.fullname.trim().length > 50
+    ) {
+      newErrors.fullname = "Full name must be between 3 and 50 characters";
     }
 
+    // Email
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = "Please provide a valid email";
     }
 
-    if (!formData.contact.trim()) {
-      newErrors.contact = "Contact number is required";
-    } else if (!/^\d{10}$/.test(formData.contact)) {
-      newErrors.contact = "Enter a valid 10 digit number";
+    // Contact (Optional)
+    if (formData.contact.trim() && !/^[6-9]\d{9}$/.test(formData.contact)) {
+      newErrors.contact = "Please provide a valid contact number";
     }
 
+    // Password
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Password must be at least 6 characters long";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password =
+        "Password must contain at least one uppercase letter";
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password =
+        "Password must contain at least one lowercase letter";
+    } else if (!/[0-9]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one number";
+    } else if (
+      !/[!@#$%^&*(),.?":{}|<>_\-[\]\\/~`+=;']/.test(formData.password)
+    ) {
+      newErrors.password =
+        "Password must contain at least one special character";
     }
 
     setErrors(newErrors);
@@ -261,13 +281,16 @@ const Register = () => {
                   rounded-xl
                   bg-orange-500
                   hover:bg-orange-600
+                  active:scale-[0.98]
+                  active:bg-orange-700
                   cursor-pointer
                   disabled:opacity-70
                   disabled:cursor-not-allowed
+                  disabled:active:scale-100
                   text-white
                   font-semibold
                   transition-all
-                  duration-200
+                  duration-150
                   flex
                   items-center
                   justify-center
