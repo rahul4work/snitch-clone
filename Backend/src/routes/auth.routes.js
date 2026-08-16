@@ -1,16 +1,7 @@
 import { Router } from "express";
-import {
-  getMe,
-  googleCallback,
-  login,
-  logout,
-  register,
-} from "../controllers/auth.controllers.js";
-import {
-  validateLoginUser,
-  validateRegisterUser,
-} from "../validators/auth.validators.js";
 import passport from "passport";
+import { getMe, googleCallback, login, logout, register } from "../controllers/auth.controllers.js";
+import { validateLoginUser, validateRegisterUser } from "../validators/auth.validators.js";
 import { authenticateUser } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
@@ -37,7 +28,7 @@ router.post("/login", validateLoginUser, login);
 router.post("/logout", logout);
 
 /**
- * @route GET /api/auth/
+ * @route GET /api/auth/me
  * @description Get current logged in user details
  * @access Private
  */

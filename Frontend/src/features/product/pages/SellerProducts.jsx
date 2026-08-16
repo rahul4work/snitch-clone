@@ -221,7 +221,7 @@ const SellerProducts = () => {
                                   onClick={() =>
                                     navigate(`/seller/product/${product._id}`)
                                   }
-                                  className="p-1.5 border border-gray-200 rounded-md bg-white hover:bg-ornage-50 hover:border-orange-200 hover:text-orange-600 text-gray-600 transition-colors cursor-pointer shadow-sm"
+                                  className="p-1.5 border border-gray-200 rounded-md bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 text-gray-600 transition-colors cursor-pointer shadow-sm"
                                 >
                                   <Edit size={14} />
                                 </button>

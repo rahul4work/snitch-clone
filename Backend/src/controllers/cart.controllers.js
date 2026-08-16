@@ -257,11 +257,7 @@ export const decrementCartItemQuantity = async (req, res) => {
       "items.product": productId,
       "items.variant": variantId,
     },
-    {
-      $inc: {
-        "items.$.quantity": -1,
-      },
-    },
+    { $inc: { "items.$.quantity": -1 } },
     { new: true },
   );
 

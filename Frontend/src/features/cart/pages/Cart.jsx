@@ -49,14 +49,24 @@ const Cart = () => {
     if (attributes?.toJSON && typeof attributes.toJSON === "function") {
       return attributes.toJSON();
     }
+
     return attributes;
+  };
+
+  const normalizeValue = (value) =>
+    String(value ?? "")
+      .trim()
+      .toLowerCase();
+
+  const getVariantForItem = (item, product) => {
+    const variantId = getVariantId(item);
+
+    return product?.variants?.find((variant) => variant?._id === variantId);
   };
 
   const getVariantLabel = (item) => {
     const product = productMap[item?.product?._id] || item.product;
-    const variant = product?.variants?.find((variantItem) => {
-      return variantItem._id === item.variant;
-    });
+    const variant = getVariantForItem(item, product);
 
     if (!variant?.attributes) {
       return "Default variant";
@@ -65,6 +75,7 @@ const Cart = () => {
     const attributeEntries = Object.entries(
       normalizeAttributes(variant.attributes),
     );
+
     return attributeEntries.length > 0
       ? attributeEntries.map(([key, value]) => `${key}: ${value}`).join(" • ")
       : "Default variant";
@@ -135,9 +146,7 @@ const Cart = () => {
               const productId = getProductId(item);
               const variantId = getVariantId(item);
               const product = productMap[item?.product?._id] || item.product;
-              const variant = product?.variants?.find((variantItem) => {
-                return variantItem._id === item.variant;
-              });
+              const variant = getVariantForItem(item, product);
               const displayPrice =
                 variant?.price?.amount ??
                 item.price?.amount ??
@@ -156,8 +165,33 @@ const Cart = () => {
                   : remainingStock <= 2
                     ? "bg-amber-100 text-amber-700"
                     : "bg-zinc-100 text-zinc-600";
+              const selectedVariantImages = variant?.images ?? [];
+
+              const variantColour = normalizeAttributes(
+                variant?.attributes,
+              ).Colour;
+
+              const sameColourVariant = product?.variants?.find(
+                (variantItem) => {
+                  if (variantItem?._id === variant?._id) {
+                    return false;
+                  }
+
+                  const attributes = normalizeAttributes(
+                    variantItem?.attributes,
+                  );
+
+                  return (
+                    normalizeValue(attributes?.Colour) ===
+                      normalizeValue(variantColour) &&
+                    variantItem?.images?.length > 0
+                  );
+                },
+              );
+
               const itemImage =
-                variant?.images?.[0]?.url ||
+                selectedVariantImages?.[0]?.url ||
+                sameColourVariant?.images?.[0]?.url ||
                 product?.images?.[0]?.url ||
                 item.product?.images?.[0]?.url ||
                 "https://via.placeholder.com/150";

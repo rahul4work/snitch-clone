@@ -1,11 +1,20 @@
-import React from "react";
-import { Outlet, useLocation } from "react-router";
+import React, { useLayoutEffect } from "react";
 import Navbar from "../features/shared/components/Navbar.jsx";
+import { Outlet, useLocation } from "react-router";
 
 const AppLayout = () => {
   const location = useLocation();
 
   const showAnnouncementBar = location.pathname === "/";
+
+  useLayoutEffect(() => {
+  window.history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
+
+  return () => {
+    window.history.scrollRestoration = "auto";
+  };
+}, []);
 
   return (
     <>

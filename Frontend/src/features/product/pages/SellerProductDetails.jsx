@@ -9,7 +9,6 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import Navbar from "../../shared/components/Navbar.jsx";
 import useProduct from "../hook/useProduct.js";
 
 const getCurrencySymbol = (currency) => {
@@ -119,7 +118,6 @@ const SellerProductDetails = () => {
 
   const handleSaveVariant = async () => {
     try {
-      // Capture any un-added attribute currently in the input fields
       const finalAttributes = { ...attributes };
       if (newAttrKey.trim() && newAttrValue.trim()) {
         finalAttributes[newAttrKey.trim()] = newAttrValue.trim();
@@ -162,9 +160,6 @@ const SellerProductDetails = () => {
       setVariantImages([]);
       setImagePreviews([]);
       setIsAddingVariant(false);
-
-      // ya agar backend se latest data lana ho:
-      // await fetchProductDetails();
 
       console.log("Variant created:", data);
     } catch (error) {

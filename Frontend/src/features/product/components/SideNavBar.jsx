@@ -1,15 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
-import {
-  LayoutDashboard,
-  LogOut,
-  Package,
-  PlusCircle,
-  Settings,
-  ShoppingBag,
-  Users,
-} from "lucide-react";
+import { LayoutDashboard, LogOut, Package, PlusCircle, Settings, ShoppingBag, Users } from "lucide-react";
 import Logo from "../../../assets/Logo.png";
 import useAuth from "../../auth/hook/useAuth.js";
 

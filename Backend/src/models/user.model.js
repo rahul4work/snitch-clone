@@ -49,4 +49,5 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 const userModel = mongoose.model("users", userSchema);
+
 export default userModel;

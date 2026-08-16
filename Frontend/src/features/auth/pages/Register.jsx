@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import TitleLogo from "../components/TitleLogo.jsx";
 import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 import ImageSection from "../components/ImageSection.jsx";
 import useAuth from "../hook/useAuth.js";
-import { useDispatch, useSelector } from "react-redux";
-import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import { setError, setErrorCode } from "../state/auth.slice.js";
 
 const Register = () => {
@@ -123,14 +123,21 @@ const Register = () => {
   return (
     <div className="w-full h-screen flex overflow-x-hidden">
       {/* Left Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center overflow-y-auto bg-linear-to-br from-white to-orange-50">
+      <div
+        className="w-full lg:w-1/2
+          flex items-start lg:items-center
+          justify-center
+          px-5 sm:px-8 lg:px-16
+          py-8 sm:py-12 md:py-14 lg:py-10
+          bg-linear-to-br from-white to-orange-50"
+      >
         <div className="w-full max-w-md mx-auto">
           {/* Logo */}
           <TitleLogo />
 
           <div className="ml-1">
             {/* Heading */}
-            <div className="mb-5 mt-4">
+            <div className="mb-6 sm:mb-8 mt-6 sm:mt-8">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
                 Create Account
               </h2>
@@ -141,7 +148,7 @@ const Register = () => {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
               {/* Full Name */}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -252,11 +259,13 @@ const Register = () => {
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-                </div>
 
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Seller Checkbox */}

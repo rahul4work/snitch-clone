@@ -5,8 +5,8 @@ import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import TitleLogo from "../components/TitleLogo.jsx";
 import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 import ImageSection from "../components/ImageSection.jsx";
-import { setError, setErrorCode } from "../state/auth.slice.js";
 import useAuth from "../hook/useAuth.js";
+import { setError, setErrorCode } from "../state/auth.slice.js";
 
 const Login = () => {
   const { handleLogin } = useAuth();
@@ -83,7 +83,9 @@ const Login = () => {
       } else if (user.role === "seller") {
         navigate("/seller/dashboard");
       }
-    } catch (error) {}
+    } catch (error) {
+      // Error is already handled in useAuth
+    }
   };
 
   const handleGoogleLogin = () => {

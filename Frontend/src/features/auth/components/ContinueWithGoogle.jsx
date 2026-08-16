@@ -2,18 +2,20 @@ import { useState } from "react";
 import googleLogo from "../../../assets/google.svg";
 
 const ContinueWithGoogle = ({ onClick }) => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = () => {
-    setLoading(true);
-    onClick();
+    setTimeout(() => {
+      setIsLoading(true);
+      onClick();
+    }, 120);
   };
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      disabled={loading}
+      disabled={isLoading}
       className="
         w-full
         h-12
@@ -34,7 +36,7 @@ const ContinueWithGoogle = ({ onClick }) => {
         cursor-pointer
       "
     >
-      {loading ? (
+      {isLoading ? (
         <>
           <div
             className="
@@ -47,9 +49,7 @@ const ContinueWithGoogle = ({ onClick }) => {
               animate-spin
             "
           />
-          <span className="font-medium text-gray-700">
-            Continuing...
-          </span>
+          <span className="font-medium text-gray-700">Continuing...</span>
         </>
       ) : (
         <>

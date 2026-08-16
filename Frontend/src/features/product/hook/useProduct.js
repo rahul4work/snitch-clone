@@ -1,18 +1,6 @@
 import { useDispatch } from "react-redux";
-import {
-  addProductVariant,
-  createProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductDetails,
-  getSellerProductDetails,
-  getSellerProducts,
-} from "../service/product.api.js";
-import {
-  setCurrentProduct,
-  setProducts,
-  setSellerProducts,
-} from "../state/product.slice.js";
+import { addProductVariant, createProduct, deleteProduct, getAllProducts, getProductDetails, getSellerProductDetails, getSellerProducts } from "../service/product.api.js";
+import { setCurrentProduct, setProducts, setSellerProducts } from "../state/product.slice.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
@@ -21,6 +9,12 @@ const useProduct = () => {
     const data = await createProduct(formData);
 
     return data.product;
+  };
+  
+  const handleDeleteProduct = async (productId) => {
+    const data = await deleteProduct(productId);
+
+    return data;
   };
 
   const handleGetSellerProducts = async () => {
@@ -33,12 +27,6 @@ const useProduct = () => {
   const handleGetAllProducts = async () => {
     const data = await getAllProducts();
     dispatch(setProducts(data.products));
-  };
-
-  const handleDeleteProduct = async (productId) => {
-    const data = await deleteProduct(productId);
-
-    return data;
   };
 
   const handleGetProductDetails = async (productId) => {
@@ -60,15 +48,7 @@ const useProduct = () => {
     return data.product;
   };
 
-  return {
-    handleCreateProduct,
-    handleGetSellerProducts,
-    handleGetAllProducts,
-    handleDeleteProduct,
-    handleGetProductDetails,
-    handleGetSellerProductDetails,
-    handleAddProductVariant,
-  };
+  return { handleCreateProduct, handleDeleteProduct, handleGetSellerProducts, handleGetAllProducts, handleGetProductDetails, handleGetSellerProductDetails, handleAddProductVariant };
 };
 
 export default useProduct;

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import useProduct from "../hook/useProduct.js";
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,8 +11,9 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
-import useCart from "../../cart/hook/useCart.js";
+import useProduct from "../hook/useProduct.js";
 import { setCurrentProduct } from "../state/product.slice.js";
+import useCart from "../../cart/hook/useCart.js";
 
 const getCurrencySymbol = (currency) => {
   switch (currency) {
@@ -72,6 +72,50 @@ const normalizeValue = (value) =>
   String(value ?? "")
     .trim()
     .toLowerCase();
+
+const getVariantImagesByColour = (variants, selectedVariant, productImages) => {
+  if (!selectedVariant) {
+    return productImages ?? [];
+  }
+
+  // If selected variant already has images, use them
+  if (selectedVariant.images?.length > 0) {
+    return selectedVariant.images;
+  }
+
+  const selectedAttributes = normalizeAttributes(selectedVariant.attributes);
+
+  const selectedColour = selectedAttributes.Colour;
+
+  // If variant doesn't have a colour attribute,
+  // fallback to product images
+  if (!selectedColour) {
+    return productImages ?? [];
+  }
+
+  // Find another variant having the same colour and images
+  const sameColourVariant = variants.find((variant) => {
+    if (variant._id === selectedVariant._id) {
+      return false;
+    }
+
+    const attributes = normalizeAttributes(variant.attributes);
+
+    const variantColour = attributes.Colour;
+
+    return (
+      normalizeValue(variantColour) === normalizeValue(selectedColour) &&
+      variant.images?.length > 0
+    );
+  });
+
+  if (sameColourVariant) {
+    return sameColourVariant.images;
+  }
+
+  // No same-colour variant has images
+  return productImages ?? [];
+};
 
 const findMatchingVariant = (variants, selectedAttributes) => {
   const entries = Object.entries(selectedAttributes);
@@ -174,7 +218,7 @@ const ProductDetails = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const { handleGetProductDetails } = useProduct();
 
   const { handleAddItem } = useCart();
@@ -203,6 +247,13 @@ const ProductDetails = () => {
     setSelectedImage(0);
   }, [product]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [productId]);
+
   const variants = product?.variants ?? [];
 
   const attributeGroups = useMemo(
@@ -226,10 +277,35 @@ const ProductDetails = () => {
     if (useDefaultProduct || !selectedVariant) {
       return product?.images ?? [];
     }
-    return selectedVariant.images?.length > 0
-      ? selectedVariant.images
-      : (product?.images ?? []);
-  }, [useDefaultProduct, selectedVariant, product?.images]);
+
+    return getVariantImagesByColour(variants, selectedVariant, product?.images);
+  }, [useDefaultProduct, selectedVariant, variants, product?.images]);
+
+  const isAttributeValueAvailable = (
+    variants,
+    selectedAttributes,
+    attrKey,
+    value,
+  ) => {
+    const otherSelections = Object.entries(selectedAttributes).filter(
+      ([key]) => key !== attrKey,
+    );
+
+    return variants.some((variant) => {
+      const attrs = normalizeAttributes(variant.attributes);
+
+      // Current attribute must match the value we're checking
+      if (normalizeValue(attrs[attrKey]) !== normalizeValue(value)) {
+        return false;
+      }
+
+      // All other currently selected attributes must also match
+      return otherSelections.every(
+        ([key, selectedValue]) =>
+          normalizeValue(attrs[key]) === normalizeValue(selectedValue),
+      );
+    });
+  };
 
   const stock = useDefaultProduct ? null : Number(selectedVariant?.stock ?? 0);
   const isAddToCartDisabled =
@@ -321,8 +397,8 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <div className="w-full max-w-350 mx-auto px-6 py-10">
+    <div className="min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] lg:overflow-hidden bg-zinc-50">
+      <div className="w-full max-w-350 mx-auto px-6 py-6 lg:h-full">
         <div className="flex h-auto items-center pb-4 gap-4">
           <button
             onClick={() => window.history.back()}
@@ -430,19 +506,37 @@ const ProductDetails = () => {
                             normalizeValue(selectedAttributes[attrKey]) ===
                               normalizeValue(value);
 
+                          const available = isAttributeValueAvailable(
+                            variants,
+                            selectedAttributes,
+                            attrKey,
+                            value,
+                          );
+
                           return (
                             <button
                               key={value}
-                              onClick={() =>
-                                handleSelectAttribute(attrKey, value)
-                              }
-                              className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
+                              onClick={() => {
+                                if (!available) return;
+
+                                handleSelectAttribute(attrKey, value);
+                              }}
+                              disabled={!available}
+                              className={`relative px-3 py-1.5 rounded-md border text-xs font-medium transition-all whitespace-nowrap ${
                                 active
                                   ? "border-orange-500 bg-orange-50 text-orange-600"
-                                  : "border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600"
+                                  : available
+                                    ? "border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600 cursor-pointer"
+                                    : "border-zinc-200 text-zinc-300 bg-zinc-50 cursor-not-allowed"
                               }`}
                             >
                               {value}
+
+                              {!available && (
+                                <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                  <span className="w-full h-px bg-zinc-300 rotate-[-20deg]" />
+                                </span>
+                              )}
                             </button>
                           );
                         })}

@@ -2,15 +2,7 @@ import { Router } from "express";
 import { authenticateSeller } from "../middlewares/auth.middlewares.js";
 import { uploadProductImages } from "../middlewares/upload.middleware.js";
 import { createProductValidator } from "../validators/product.validator.js";
-import {
-  addProductVariant,
-  createProduct,
-  deleteProduct,
-  getAllProducts,
-  getProductDetails,
-  getSellerProductDetails,
-  getSellerProducts,
-} from "../controllers/product.controllers.js";
+import { addProductVariant, createProduct, deleteProduct, getAllProducts, getProductDetails, getSellerProductDetails, getSellerProducts } from "../controllers/product.controllers.js";
 
 const router = Router();
 

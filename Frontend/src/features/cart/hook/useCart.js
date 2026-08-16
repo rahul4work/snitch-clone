@@ -22,7 +22,10 @@ const useCart = () => {
 
     if (data?.success) {
       const cartData = await getCart();
-      dispatch(setItems(cartData.cart.items));
+
+      if (cartData?.success) {
+        dispatch(setItems(cartData.cart.items));
+      }
     }
 
     return data;
@@ -30,12 +33,22 @@ const useCart = () => {
 
   const handleGetCart = async () => {
     const data = await getCart();
-    dispatch(setItems(data.cart.items));
+
+    if (data?.success) {
+      dispatch(setItems(data.cart.items));
+    }
+
+    return data;
   };
 
   const handleIncrementCartItem = async ({ productId, variantId }) => {
     const data = await incrementCartItemApi({ productId, variantId });
-    dispatch(incrementCartItem({ productId, variantId }));
+
+    if (data?.success) {
+      dispatch(incrementCartItem({ productId, variantId }));
+    }
+
+    return data;
   };
 
   const handleDecrementCartItem = async ({ productId, variantId }) => {
@@ -49,12 +62,9 @@ const useCart = () => {
   };
 
   const handleRemoveCartItem = async ({ productId, variantId }) => {
-    const data = await removeCartItemApi({
-      productId,
-      variantId,
-    });
+    const data = await removeCartItemApi({ productId, variantId });
 
-    if (data.success) {
+    if (data?.success) {
       dispatch(removeCartItem({ productId, variantId }));
     }
 

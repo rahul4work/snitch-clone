@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { RouterProvider } from "react-router";
-import "./App.css";
 import router from "./app.routes.jsx";
 import useAuth from "../features/auth/hook/useAuth.js";
-import { useEffect } from "react";
+import "./App.css";
 
 function App() {
   const { handleGetMe } = useAuth();
