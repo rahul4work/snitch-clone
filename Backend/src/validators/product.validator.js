@@ -44,3 +44,34 @@ export const createProductValidator = [
 
   validateRequest,
 ];
+
+// add product variant validation
+export const addProductVariantValidator = [
+  body("attributes")
+    .notEmpty()
+    .withMessage("Variant attributes are required")
+    .custom((attributes) => {
+      if (
+        typeof attributes !== "object" ||
+        Array.isArray(attributes) ||
+        Object.keys(attributes).length === 0
+      ) {
+        throw new Error("Variant attributes must be a non-empty object");
+      }
+
+      return true;
+    }),
+
+  body("stock")
+    .notEmpty()
+    .withMessage("Stock is required")
+    .isInt({ min: 0 })
+    .withMessage("Stock must be a non-negative integer"),
+
+  body("price")
+    .optional({ values: "falsy" })
+    .isFloat({ gt: 0 })
+    .withMessage("Price must be greater than 0"),
+
+  validateRequest,
+];

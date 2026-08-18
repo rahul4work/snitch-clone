@@ -58,11 +58,44 @@ const getAttributeGroups = (variants = []) => {
 
   variants.forEach((variant) => {
     const attrs = normalizeAttributes(variant.attributes);
+
     Object.entries(attrs).forEach(([key, value]) => {
       if (!key || !value) return;
-      if (!groups[key]) groups[key] = new Set();
+
+      if (!groups[key]) {
+        groups[key] = new Set();
+      }
+
       groups[key].add(value);
     });
+  });
+
+  // Define the preferred order for specific attributes
+  const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  Object.keys(groups).forEach((key) => {
+    const values = [...groups[key]];
+
+    if (normalizeValue(key) === "size") {
+      values.sort((a, b) => {
+        const indexA = sizeOrder.indexOf(String(a).toUpperCase());
+        const indexB = sizeOrder.indexOf(String(b).toUpperCase());
+
+        // Known sizes follow predefined order
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        }
+
+        // Known sizes come before unknown values
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+
+        // Unknown sizes are sorted alphabetically
+        return String(a).localeCompare(String(b));
+      });
+    }
+
+    groups[key] = values;
   });
 
   return groups;
@@ -294,16 +327,23 @@ const ProductDetails = () => {
     return variants.some((variant) => {
       const attrs = normalizeAttributes(variant.attributes);
 
-      // Current attribute must match the value we're checking
+      // Attribute value must match
       if (normalizeValue(attrs[attrKey]) !== normalizeValue(value)) {
         return false;
       }
 
-      // All other currently selected attributes must also match
-      return otherSelections.every(
+      // Other selected attributes must also match
+      const matchesOtherSelections = otherSelections.every(
         ([key, selectedValue]) =>
           normalizeValue(attrs[key]) === normalizeValue(selectedValue),
       );
+
+      if (!matchesOtherSelections) {
+        return false;
+      }
+
+      // Variant must have stock
+      return Number(variant.stock ?? 0) > 0;
     });
   };
 

@@ -44,9 +44,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-zinc-50">
+    <div className="min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] lg:overflow-hidden bg-zinc-50">
       {/* Main Content */}
-      <main className="max-w-300 mx-auto px-4 py-8">
+      <main className="w-full max-w-350 mx-auto px-6 py-6 lg:h-full">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-72 shrink-0">

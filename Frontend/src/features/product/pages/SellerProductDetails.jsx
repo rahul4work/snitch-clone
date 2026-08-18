@@ -46,6 +46,10 @@ const SellerProductDetails = () => {
   const [variantImages, setVariantImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
+  const [isSavingVariant, setIsSavingVariant] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [variantErrors, setVariantErrors] = useState({});
+
   const { handleGetSellerProductDetails, handleAddProductVariant } =
     useProduct();
 
@@ -67,14 +71,50 @@ const SellerProductDetails = () => {
   }, [productId]);
 
   const handleAddAttribute = () => {
-    if (newAttrKey.trim() && newAttrValue.trim()) {
-      setAttributes((prev) => ({
+    const key = newAttrKey.trim();
+    const value = newAttrValue.trim();
+
+    if (!key) {
+      setVariantErrors((prev) => ({
         ...prev,
-        [newAttrKey.trim()]: newAttrValue.trim(),
+        newAttrKey: "Attribute name is required",
       }));
-      setNewAttrKey("");
-      setNewAttrValue("");
+      return;
     }
+
+    if (!value) {
+      setVariantErrors((prev) => ({
+        ...prev,
+        newAttrValue: "Attribute value is required",
+      }));
+      return;
+    }
+
+    if (
+      Object.keys(attributes).some(
+        (existingKey) => existingKey.toLowerCase() === key.toLowerCase(),
+      )
+    ) {
+      setVariantErrors((prev) => ({
+        ...prev,
+        newAttrKey: "This attribute already exists",
+      }));
+      return;
+    }
+
+    setAttributes((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    setNewAttrKey("");
+    setNewAttrValue("");
+
+    setVariantErrors((prev) => ({
+      ...prev,
+      newAttrKey: "",
+      newAttrValue: "",
+    }));
   };
 
   const handleRemoveAttribute = (keyToRemove) => {
@@ -116,12 +156,77 @@ const SellerProductDetails = () => {
     setImagePreviews(newPreviews);
   };
 
-  const handleSaveVariant = async () => {
-    try {
-      const finalAttributes = { ...attributes };
-      if (newAttrKey.trim() && newAttrValue.trim()) {
-        finalAttributes[newAttrKey.trim()] = newAttrValue.trim();
+  const validateVariantForm = () => {
+    const errors = {};
+
+    const finalAttributes = { ...attributes };
+
+    // Include currently typed attribute
+    if (newAttrKey.trim() || newAttrValue.trim()) {
+      const key = newAttrKey.trim();
+      const value = newAttrValue.trim();
+
+      if (!key) {
+        errors.newAttrKey = "Attribute name is required";
       }
+
+      if (!value) {
+        errors.newAttrValue = "Attribute value is required";
+      }
+
+      if (
+        key &&
+        Object.keys(attributes).some(
+          (existingKey) => existingKey.toLowerCase() === key.toLowerCase(),
+        )
+      ) {
+        errors.newAttrKey = "This attribute already exists";
+      }
+
+      if (key && value && !errors.newAttrKey && !errors.newAttrValue) {
+        finalAttributes[key] = value;
+      }
+    }
+
+    // At least one attribute required
+    if (Object.keys(finalAttributes).length === 0) {
+      errors.attributes = "At least one attribute is required";
+    }
+
+    // Stock validation
+    if (stock === "") {
+      errors.stock = "Stock is required";
+    } else if (!/^\d+$/.test(stock)) {
+      errors.stock = "Stock must be a whole number";
+    }
+
+    // Price validation
+    if (priceAmount !== "") {
+      if (!/^\d+(\.\d+)?$/.test(priceAmount)) {
+        errors.priceAmount = "Price must be a valid number";
+      } else if (Number(priceAmount) <= 0) {
+        errors.priceAmount = "Price must be greater than 0";
+      }
+    }
+
+    setVariantErrors(errors);
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      finalAttributes,
+    };
+  };
+
+  const handleSaveVariant = async () => {
+    const { isValid, finalAttributes } = validateVariantForm();
+
+    if (!isValid) {
+      return;
+    }
+
+    try {
+      setIsSavingVariant(true);
+      setSuccessMessage("");
 
       const newVariant = {
         attributes: finalAttributes,
@@ -159,11 +264,22 @@ const SellerProductDetails = () => {
       setStock("");
       setVariantImages([]);
       setImagePreviews([]);
+      setVariantErrors({});
       setIsAddingVariant(false);
+
+      setSuccessMessage(
+        "Variant created successfully. Check out the created variant below.",
+      );
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
 
       console.log("Variant created:", data);
     } catch (error) {
       console.log("Error adding variant", error);
+    } finally {
+      setIsSavingVariant(false);
     }
   };
 
@@ -358,27 +474,69 @@ const SellerProductDetails = () => {
                   </div>
 
                   <div className="flex gap-3 items-start">
-                    <input
-                      type="text"
-                      placeholder="Key (e.g. Size)"
-                      value={newAttrKey}
-                      onChange={(e) => setNewAttrKey(e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Value (e.g. M)"
-                      value={newAttrValue}
-                      onChange={(e) => setNewAttrValue(e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="Key (e.g. Size)"
+                        value={newAttrKey}
+                        onChange={(e) => {
+                          setNewAttrKey(e.target.value);
+                          setVariantErrors((prev) => ({
+                            ...prev,
+                            newAttrKey: "",
+                          }));
+                        }}
+                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
+                          variantErrors.newAttrKey
+                            ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                        }`}
+                      />
+
+                      {variantErrors.newAttrKey && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {variantErrors.newAttrKey}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="Value (e.g. M)"
+                        value={newAttrValue}
+                        onChange={(e) => {
+                          setNewAttrValue(e.target.value);
+                          setVariantErrors((prev) => ({
+                            ...prev,
+                            newAttrValue: "",
+                          }));
+                        }}
+                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
+                          variantErrors.newAttrValue
+                            ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                        }`}
+                      />
+
+                      {variantErrors.newAttrValue && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {variantErrors.newAttrValue}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <button
                     onClick={handleAddAttribute}
-                    className="mt-3 flex items-center gap-1 text-sm text-orange-600 font-medium hover:text-orange-700"
+                    className="mt-3 flex items-center gap-1 text-sm text-orange-600 font-medium hover:text-orange-700 cursor-pointer"
                   >
                     <Plus size={16} /> Add attribute
                   </button>
+                  {variantErrors.attributes && (
+                    <p className="text-xs text-red-500 mt-2">
+                      {variantErrors.attributes}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -389,11 +547,29 @@ const SellerProductDetails = () => {
                     </label>
                     <input
                       type="number"
+                      min="0"
+                      step="1"
                       placeholder="0"
                       value={stock}
-                      onChange={(e) => setStock(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                      onChange={(e) => {
+                        setStock(e.target.value);
+                        setVariantErrors((prev) => ({
+                          ...prev,
+                          stock: "",
+                        }));
+                      }}
+                      className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
+                        variantErrors.stock
+                          ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                      }`}
                     />
+
+                    {variantErrors.stock && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {variantErrors.stock}
+                      </p>
+                    )}
                   </div>
                   {/* Price */}
                   <div>
@@ -406,11 +582,29 @@ const SellerProductDetails = () => {
                       </span>
                       <input
                         type="number"
+                        min="0"
+                        step="0.01"
                         placeholder="Default if empty"
                         value={priceAmount}
-                        onChange={(e) => setPriceAmount(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                        onChange={(e) => {
+                          setPriceAmount(e.target.value);
+                          setVariantErrors((prev) => ({
+                            ...prev,
+                            priceAmount: "",
+                          }));
+                        }}
+                        className={`w-full border rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-1 ${
+                          variantErrors.priceAmount
+                            ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                        }`}
                       />
+
+                      {variantErrors.priceAmount && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {variantErrors.priceAmount}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -466,17 +660,33 @@ const SellerProductDetails = () => {
             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
               <button
                 onClick={() => setIsAddingVariant(false)}
-                className="px-5 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-100 active:scale-[0.98] transition-all duration-150 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveVariant}
-                className="px-5 py-2 rounded-lg font-medium bg-gray-900 text-white hover:bg-black transition-colors cursor-pointer"
+                disabled={isSavingVariant}
+                className="px-5 py-2 rounded-lg font-medium bg-gray-900 text-white hover:bg-black active:scale-[0.98] transition-all duration-150 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Save Variant
+                {isSavingVariant ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  "Save Variant"
+                )}
               </button>
             </div>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <p className="text-sm font-medium text-emerald-700">
+              {successMessage}
+            </p>
           </div>
         )}
 

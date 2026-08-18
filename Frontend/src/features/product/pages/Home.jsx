@@ -72,6 +72,31 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      sessionStorage.setItem("homeScrollPosition", window.scrollY);
+    };
+
+    window.addEventListener("scroll", saveScrollPosition);
+
+    return () => {
+      window.removeEventListener("scroll", saveScrollPosition);
+    };
+  }, []);
+
+  useEffect(() => {
+    const savedPosition = sessionStorage.getItem("homeScrollPosition");
+
+    if (savedPosition !== null) {
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: Number(savedPosition),
+          behavior: "instant",
+        });
+      });
+    }
+  }, []);
+
   const handleWishlistClick = () => {
     if (user) {
       navigate("/wishlist");
