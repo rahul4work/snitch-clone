@@ -181,7 +181,7 @@ export const googleCallback = async (req, res) => {
 
     res.cookie("token", token);
 
-    res.redirect(`${config.BACKEND_URL}`);
+    res.redirect(`${config.FRONTEND_URL}`);
   } catch (error) {
     return res.status(500).json({
       success: false,
