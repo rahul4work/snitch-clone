@@ -33,10 +33,15 @@ if (!process.env.IMAGEKIT_PRIVATE_KEY) {
   throw new Error("IMAGEKIT_PRIVATE_KEY is not defined in environment variable");
 }
 
+if (!process.env.GOOGLE_CALLBACK_URL) {
+  throw new Error("GOOGLE_CALLBACK_URL is not defined in environment variable")
+}
+
 export const config = {
   PORT: process.env.PORT,
   FRONTEND_URL: process.env.FRONTEND_URL,
   BACKEND_URL: process.env.BACKEND_URL,
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
   MONGODB_URI: process.env.MONGODB_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
