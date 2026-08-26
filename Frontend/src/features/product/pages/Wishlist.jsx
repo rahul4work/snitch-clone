@@ -56,7 +56,7 @@ const Wishlist = () => {
                 className="bg-white border border-zinc-200 shadow-sm group"
               >
                 <Link to={`/product/${product._id}`}>
-                  <div className="aspect-[3/4] bg-zinc-100 overflow-hidden">
+                  <div className="aspect-3/4 bg-zinc-100 overflow-hidden">
                     <img
                       src={product.images?.[0]?.url}
                       alt={product.title}

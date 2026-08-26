@@ -400,6 +400,7 @@ const ProductDetails = () => {
 
       window.setTimeout(() => {
         setCartMessage("");
+        setCartButtonLabel("Add to Cart");
       }, 2000);
     }
   };
