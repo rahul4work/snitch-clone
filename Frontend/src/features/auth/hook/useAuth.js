@@ -1,17 +1,35 @@
 import { useDispatch } from "react-redux";
 import { getMe, login, logout, register } from "../service/auth.api.js";
-import { setError, setErrorCode, setLoading, setAuthRequestLoading, setUser } from "../state/auth.slice.js";
+import {
+  setError,
+  setErrorCode,
+  setLoading,
+  setAuthRequestLoading,
+  setUser,
+} from "../state/auth.slice.js";
 
 const useAuth = () => {
   const dispatch = useDispatch();
 
-  const handleRegister = async ({ email, contact, password, fullname, isSeller = false }) => {
+  const handleRegister = async ({
+    email,
+    contact,
+    password,
+    fullname,
+    isSeller = false,
+  }) => {
     try {
       dispatch(setAuthRequestLoading(true));
       dispatch(setError(null));
       dispatch(setErrorCode(null));
 
-      const data = await register({ email, contact, password, fullname, isSeller });
+      const data = await register({
+        email,
+        contact,
+        password,
+        fullname,
+        isSeller,
+      });
 
       dispatch(setUser(data.user));
 
@@ -43,7 +61,7 @@ const useAuth = () => {
     } catch (error) {
       const code = error.response?.data?.code || "UNKNOWN_ERROR";
       const message = error.response?.data?.message || "Something went wrong";
-      
+
       dispatch(setErrorCode(code));
       dispatch(setError(message));
 
