@@ -120,11 +120,123 @@ export const addToCart = async (req, res) => {
 export const getCart = async (req, res) => {
   const user = req.user;
 
-  let cart = await cartModel
-    .findOne({
-      user: user._id,
-    })
-    .populate("items.product");
+  let cart = await cartModel.aggregate([
+    {
+      $match: {
+        user: user._id,
+      },
+    },
+
+    {
+      $unwind: {
+        path: "$items",
+      },
+    },
+
+    {
+      $lookup: {
+        from: "products",
+        localField: "items.product",
+        foreignField: "_id",
+        as: "items.product",
+      },
+    },
+
+    {
+      $unwind: {
+        path: "$items.product",
+      },
+    },
+
+    {
+      $set: {
+        selectedVariant: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items.product.variants",
+                as: "variant",
+                cond: {
+                  $eq: ["$$variant._id", "$items.variant"],
+                },
+              },
+            },
+            0,
+          ],
+        },
+      },
+    },
+
+    {
+      $set: {
+        variantImage: {
+          $let: {
+            vars: {
+              sameColourVariants: {
+                $filter: {
+                  input: "$items.product.variants",
+                  as: "variant",
+                  cond: {
+                    $and: [
+                      {
+                        $eq: [
+                          "$$variant.attributes.Colour",
+                          "$selectedVariant.attributes.Colour",
+                        ],
+                      },
+                      {
+                        $gt: [
+                          { $size: { $ifNull: ["$$variant.images", []] } },
+                          0,
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            in: {
+              $arrayElemAt: ["$$sameColourVariants.images", 0],
+            },
+          },
+        },
+      },
+    },
+
+    {
+      $set: {
+        itemPrice: {
+          price: {
+            $multiply: ["$items.quantity", "$selectedVariant.price.amount"],
+          },
+          currency: "$selectedVariant.price.currency",
+        },
+        "items.image": "$variantImage",
+      },
+    },
+
+    {
+      $group: {
+        _id: "$_id",
+
+        user: {
+          $first: "$user",
+        },
+
+        totalPrice: {
+          $sum: "$itemPrice.price",
+        },
+
+        currency: {
+          $first: "$itemPrice.currency",
+        },
+
+        items: {
+          $push: "$items",
+        },
+      },
+    },
+  ]);
 
   if (!cart) {
     cart = await cartModel.create({ user: user._id });
