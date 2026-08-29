@@ -25,14 +25,6 @@ const Cart = () => {
     handleGetCart();
   }, []);
 
-  const subtotal = cartItems?.reduce(
-    (acc, item) => acc + (item.price?.amount || 0) * (item.quantity || 1),
-    0,
-  );
-
-  const shipping = subtotal > 1000 ? 0 : 99;
-  const total = subtotal + shipping;
-
   const getProductId = (item) => item?.product?._id || item?.product;
 
   const getVariantId = (item) => item?.variant?._id || item?.variant;
@@ -61,9 +53,14 @@ const Cart = () => {
   const getVariantForItem = (item, product) => {
     const variantId = getVariantId(item);
 
-    return product?.variants?.find((variant) => variant?._id === variantId);
-  };
+    if (!product?.variants) return null;
 
+    if (!Array.isArray(product.variants)) {
+      return product.variants?._id === variantId ? product.variants : null;
+    }
+
+    return product.variants.find((variant) => variant?._id === variantId);
+  };
   const getVariantLabel = (item) => {
     const product = productMap[item?.product?._id] || item.product;
     const variant = getVariantForItem(item, product);
@@ -80,6 +77,28 @@ const Cart = () => {
       ? attributeEntries.map(([key, value]) => `${key}: ${value}`).join(" • ")
       : "Default variant";
   };
+
+  const getCurrentPrice = (item) => {
+    const product = productMap[item?.product?._id] || item?.product;
+    const variant = getVariantForItem(item, product);
+
+    return Number(
+      variant?.price?.amount ?? item?.product?.variants?.price?.amount ?? 0,
+    );
+  };
+
+  const getCartPrice = (item) => {
+    return Number(item?.price?.amount ?? 0);
+  };
+
+  const subtotal = cartItems?.reduce((acc, item) => {
+    const currentPrice = getCurrentPrice(item);
+
+    return acc + currentPrice * (item.quantity || 1);
+  }, 0);
+
+  const shipping = subtotal > 1000 ? 0 : 99;
+  const total = subtotal + shipping;
 
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -147,11 +166,14 @@ const Cart = () => {
               const variantId = getVariantId(item);
               const product = productMap[item?.product?._id] || item.product;
               const variant = getVariantForItem(item, product);
-              const displayPrice =
-                variant?.price?.amount ??
-                item.price?.amount ??
-                product?.price?.amount ??
-                0;
+
+              const cartPrice = getCartPrice(item);
+              const currentPrice = getCurrentPrice(item);
+
+              const priceChanged = cartPrice !== currentPrice;
+              const priceDecreased = currentPrice < cartPrice;
+              const priceDifference = Math.abs(currentPrice - cartPrice);
+
               const stockValue = Number(variant?.stock ?? product?.stock ?? 0);
               const remainingStock = Math.max(
                 stockValue - (item.quantity || 1),
@@ -171,25 +193,28 @@ const Cart = () => {
                 variant?.attributes,
               ).Colour;
 
-              const sameColourVariant = product?.variants?.find(
-                (variantItem) => {
-                  if (variantItem?._id === variant?._id) {
-                    return false;
-                  }
+              const variants = Array.isArray(product?.variants)
+                ? product.variants
+                : product?.variants
+                  ? [product.variants]
+                  : [];
 
-                  const attributes = normalizeAttributes(
-                    variantItem?.attributes,
-                  );
+              const sameColourVariant = variants.find((variantItem) => {
+                if (variantItem?._id === variant?._id) {
+                  return false;
+                }
 
-                  return (
-                    normalizeValue(attributes?.Colour) ===
-                      normalizeValue(variantColour) &&
-                    variantItem?.images?.length > 0
-                  );
-                },
-              );
+                const attributes = normalizeAttributes(variantItem?.attributes);
+
+                return (
+                  normalizeValue(attributes?.Colour) ===
+                    normalizeValue(variantColour) &&
+                  variantItem?.images?.length > 0
+                );
+              });
 
               const itemImage =
+                item?.image?.[0]?.url ||
                 selectedVariantImages?.[0]?.url ||
                 sameColourVariant?.images?.[0]?.url ||
                 product?.images?.[0]?.url ||
@@ -220,9 +245,11 @@ const Cart = () => {
                             {product?.title || item.product?.title}
                           </Link>
                         </h3>
-                        <p className="text-lg font-bold text-zinc-900 shrink-0">
-                          ₹{displayPrice?.toLocaleString("en-IN")}
-                        </p>
+                        <div className="shrink-0 text-right">
+                          <p className="text-lg font-bold text-zinc-900">
+                            ₹{cartPrice.toLocaleString("en-IN")}
+                          </p>
+                        </div>
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                         <span className="text-zinc-500">
@@ -277,6 +304,24 @@ const Cart = () => {
                         <span>Remove</span>
                       </button>
                     </div>
+                    {/* Price change message */}
+                    {priceChanged && (
+                      <p
+                        className={`text-xs font-medium ${
+                          priceDecreased ? "text-emerald-600" : "text-red-700"
+                        }`}
+                      >
+                        {priceDecreased
+                          ? `Buy now. You will get this at ₹${currentPrice.toLocaleString(
+                              "en-IN",
+                            )}. Save ₹${priceDifference.toLocaleString("en-IN")}`
+                          : `Price updated to ₹${currentPrice.toLocaleString(
+                              "en-IN",
+                            )}. ₹${priceDifference.toLocaleString(
+                              "en-IN",
+                            )} more than when added`}
+                      </p>
+                    )}
                   </div>
                 </div>
               );

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SideNavBar from "../components/SideNavBar.jsx";
 import ProductForm from "../components/ProductForm.jsx";
 import ProductPreviewCard from "../components/ProductPreviewCard.jsx";
 

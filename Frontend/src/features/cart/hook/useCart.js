@@ -24,7 +24,7 @@ const useCart = () => {
       const cartData = await getCart();
 
       if (cartData?.success) {
-        dispatch(setItems(cartData.cart.items));
+        dispatch(setItems(cartData.cart?.[0]?.items ?? []));
       }
     }
 
@@ -35,7 +35,7 @@ const useCart = () => {
     const data = await getCart();
 
     if (data?.success) {
-      dispatch(setItems(data.cart.items));
+      dispatch(setItems(data.cart?.[0]?.items ?? []));
     }
 
     return data;

@@ -10,7 +10,6 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import SideNavBar from "../components/SideNavBar.jsx";
 import useProduct from "../hook/useProduct.js";
 
 const currencySymbols = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };

@@ -460,6 +460,7 @@ const ProductDetails = () => {
             {displayImages.length > 1 && (
               <div className="flex flex-col gap-3 max-lg:max-h-150 lg:h-150 overflow-y-auto overflow-x-hidden pr-2 no-scrollbar">
                 {displayImages.map((img, idx) => (
+                  
                   <button
                     key={img._id || idx}
                     onClick={() => setSelectedImage(idx)}
