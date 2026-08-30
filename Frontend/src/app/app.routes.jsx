@@ -17,6 +17,7 @@ import Profile from "../features/product/pages/Profile.jsx";
 import Cart from "../features/cart/pages/Cart.jsx";
 import AppLayout from "./AppLayout.jsx";
 import SellerLayout from "./SellerLayout.jsx";
+import NotFound from "../features/shared/pages/NotFound.jsx";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
         element: <SellerSettings />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
