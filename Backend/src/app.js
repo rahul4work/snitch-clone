@@ -49,12 +49,14 @@ passport.use(
 );
 
 // Test route
-app.get("/test", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to Snitch API",
+if (config.NODE_ENV !== "production") {
+  app.get("/test", (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: "Welcome to Snitch API",
+    });
   });
-});
+}
 
 // -----------------API Routes-----------------
 // auth routes

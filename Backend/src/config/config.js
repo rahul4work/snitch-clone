@@ -5,6 +5,10 @@ if (!process.env.PORT) {
   throw new Error("PORT is not defined in the environment variables");
 }
 
+if (!process.env.NODE_ENV) {
+  throw new Error("NODE_ENV is not defined in the environment variables");
+}
+
 if (!process.env.FRONTEND_URL) {
   throw new Error("FRONTEND_URL is not defined in the environment variables");
 }
@@ -35,6 +39,7 @@ if (!process.env.IMAGEKIT_PRIVATE_KEY) {
 
 export const config = {
   PORT: process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
   FRONTEND_URL: process.env.FRONTEND_URL,
   BACKEND_URL: process.env.BACKEND_URL,
   MONGODB_URI: process.env.MONGODB_URI,
