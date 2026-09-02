@@ -10,6 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import useCart from "../hook/useCart.js";
+import { useRazorpay } from "react-razorpay";
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
@@ -21,9 +22,37 @@ const Cart = () => {
     handleRemoveCartItem,
   } = useCart();
 
+  const { error, isLoading, Razorpay } = useRazorpay();
+
   useEffect(() => {
     handleGetCart();
   }, []);
+
+  const handlePayment = () => {
+    const options = {
+      key: "YOUR_RAZORPAY_KEY",
+      amount: 50000, // Amount in paise
+      currency: "INR",
+      name: "Test Company",
+      description: "Test Transaction",
+      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
+      handler: (response) => {
+        console.log(response);
+        alert("Payment Successful!");
+      },
+      prefill: {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  };
 
   const getProductId = (item) => item?.product?._id || item?.product;
 
@@ -365,6 +394,7 @@ const Cart = () => {
               <div className="mt-8">
                 <button
                   type="button"
+                  onClick={handlePayment}
                   className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-sm shadow-orange-200/60 hover:bg-orange-600 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   Proceed to Checkout
