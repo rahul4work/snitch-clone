@@ -429,3 +429,13 @@ export const removeCartItem = async (req, res) => {
     message: "Item removed from cart successfully",
   });
 };
+
+export const createOrderController = async (req, res) => {
+  const order = await createOrder({ amount: 1000, currency: "INR" });
+
+  return res.status(200).json({
+    message: "Order created successfully",
+    success: true,
+    order,
+  });
+};
