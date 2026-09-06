@@ -38,3 +38,8 @@ export const removeCartItemApi = async ({ productId, variantId }) => {
   const response = await cartApiInstance.delete(url);
   return response.data;
 };
+
+export async function createCartOrder() {
+  const response = await cartApiInstance.post("/payment/create/order");
+  return response.data;
+}

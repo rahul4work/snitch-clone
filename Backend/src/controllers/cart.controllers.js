@@ -1,6 +1,7 @@
 import productModel from "../models/product.model.js";
 import cartModel from "../models/cart.model.js";
 import { stockOfVariant } from "../dao/product.dao.js";
+import { createOrder } from "../services/payment.service.js";
 
 /**
  * @route POST /api/cart/add/:productId/:variantId

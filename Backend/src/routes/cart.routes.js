@@ -82,6 +82,8 @@ router.delete(
 
 /**
  * @route POST /api/cart/payment/create/order
+ * @desc Create an order for the items in the cart and initiate the payment
+ * @access Private
  */
 router.post("/payment/create/order", authenticateUser, createOrderController);
 

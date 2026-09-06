@@ -5,6 +5,7 @@ import {
   incrementCartItemApi,
   decrementCartItemApi,
   removeCartItemApi,
+  createCartOrder,
 } from "../service/cart.api.js";
 import {
   addItem as addItemToCart,
@@ -71,12 +72,19 @@ const useCart = () => {
     return data;
   };
 
+  const handleCreateCartOrder = async () => {
+    const data = await createCartOrder();
+
+    return data.order;
+  };
+
   return {
     handleAddItem,
     handleGetCart,
     handleIncrementCartItem,
     handleDecrementCartItem,
     handleRemoveCartItem,
+    handleCreateCartOrder
   };
 };
 

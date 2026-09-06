@@ -20,39 +20,16 @@ const Cart = () => {
     handleIncrementCartItem,
     handleDecrementCartItem,
     handleRemoveCartItem,
+    handleCreateCartOrder,
   } = useCart();
 
   const { error, isLoading, Razorpay } = useRazorpay();
 
+  const user = useSelector((state) => state.user);
+
   useEffect(() => {
     handleGetCart();
   }, []);
-
-  const handlePayment = () => {
-    const options = {
-      key: "YOUR_RAZORPAY_KEY",
-      amount: 50000, // Amount in paise
-      currency: "INR",
-      name: "Test Company",
-      description: "Test Transaction",
-      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
-      handler: (response) => {
-        console.log(response);
-        alert("Payment Successful!");
-      },
-      prefill: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#F37254",
-      },
-    };
-
-    const razorpayInstance = new Razorpay(options);
-    razorpayInstance.open();
-  };
 
   const getProductId = (item) => item?.product?._id || item?.product;
 
@@ -90,6 +67,7 @@ const Cart = () => {
 
     return product.variants.find((variant) => variant?._id === variantId);
   };
+
   const getVariantLabel = (item) => {
     const product = productMap[item?.product?._id] || item.product;
     const variant = getVariantForItem(item, product);
@@ -128,6 +106,43 @@ const Cart = () => {
 
   const shipping = subtotal > 1000 ? 0 : 99;
   const total = subtotal + shipping;
+
+  const handleCheckout = async () => {
+    if (!Razorpay) {
+      console.error("Razorpay SDK is not loaded");
+      return;
+    }
+
+    const order = await handleCreateCartOrder();
+
+    console.log("Razorpay order:", order);
+
+    const options = {
+      key: "rzp_test_TXG9JNwzqoEpbd",
+      amount: order.amount,
+      currency: order.currency,
+      name: "Snitch",
+      description: "Cart Checkout",
+      order_id: order.id,
+
+      handler: (response) => {
+        console.log("Payment successful:", response);
+      },
+
+      prefill: {
+        name: user?.fullname || "",
+        email: user?.email || "",
+        contact: user?.contact || "",
+      },
+
+      theme: {
+        color: "#f97316",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  };
 
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -394,7 +409,7 @@ const Cart = () => {
               <div className="mt-8">
                 <button
                   type="button"
-                  onClick={handlePayment}
+                  onClick={handleCheckout}
                   className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-sm shadow-orange-200/60 hover:bg-orange-600 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   Proceed to Checkout
