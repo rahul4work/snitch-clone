@@ -6,9 +6,9 @@ import {
   decrementCartItemApi,
   removeCartItemApi,
   createCartOrder,
+  verifyCartOrder,
 } from "../service/cart.api.js";
 import {
-  addItem as addItemToCart,
   setItems,
   incrementCartItem,
   decrementCartItem,
@@ -25,7 +25,7 @@ const useCart = () => {
       const cartData = await getCart();
 
       if (cartData?.success) {
-        dispatch(setItems(cartData.cart?.[0]?.items ?? []));
+        dispatch(setItems(cartData.cart?.items ?? []));
       }
     }
 
@@ -36,7 +36,7 @@ const useCart = () => {
     const data = await getCart();
 
     if (data?.success) {
-      dispatch(setItems(data.cart?.[0]?.items ?? []));
+      dispatch(setItems(data.cart?.items ?? []));
     }
 
     return data;
@@ -78,13 +78,20 @@ const useCart = () => {
     return data.order;
   };
 
+  const handleVerifyCartOrder = async ({ razorpay_order_id, razorpay_payment_id, razorpay_signature }) => {
+    const data = await verifyCartOrder({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
+
+    return data.success;
+  };
+
   return {
     handleAddItem,
     handleGetCart,
     handleIncrementCartItem,
     handleDecrementCartItem,
     handleRemoveCartItem,
-    handleCreateCartOrder
+    handleCreateCartOrder,
+    handleVerifyCartOrder,
   };
 };
 

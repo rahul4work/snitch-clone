@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import {
   ArrowRight,
@@ -21,7 +21,10 @@ const Cart = () => {
     handleDecrementCartItem,
     handleRemoveCartItem,
     handleCreateCartOrder,
+    handleVerifyCartOrder,
   } = useCart();
+
+  const navigate = useNavigate();
 
   const { error, isLoading, Razorpay } = useRazorpay();
 
@@ -125,8 +128,12 @@ const Cart = () => {
       description: "Cart Checkout",
       order_id: order.id,
 
-      handler: (response) => {
-        console.log("Payment successful:", response);
+      handler: async (response) => {
+        const isValid = await handleVerifyCartOrder(response);
+
+        if (isValid) {
+          navigate(`/order-success?order_id=${response?.razorpay_order_id}`);
+        }
       },
 
       prefill: {

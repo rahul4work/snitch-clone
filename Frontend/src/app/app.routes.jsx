@@ -18,6 +18,7 @@ import Cart from "../features/cart/pages/Cart.jsx";
 import AppLayout from "./AppLayout.jsx";
 import SellerLayout from "./SellerLayout.jsx";
 import NotFound from "../features/shared/pages/NotFound.jsx";
+import OrderSuccess from "../features/cart/pages/OrderSuccess.jsx";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Cart />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/order-success",
+        element: (
+          <ProtectedRoute>
+            <OrderSuccess />
           </ProtectedRoute>
         ),
       },

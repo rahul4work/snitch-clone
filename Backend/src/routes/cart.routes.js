@@ -7,11 +7,12 @@ import {
 } from "../validators/cart.validators.js";
 import {
   addToCart,
-  createOrderController,
-  decrementCartItemQuantity,
   getCart,
   incrementCartItemQuantity,
+  decrementCartItemQuantity,
   removeCartItem,
+  createOrderController,
+  verifyOrderController,
 } from "../controllers/cart.controllers.js";
 
 const router = Router();
@@ -86,5 +87,12 @@ router.delete(
  * @access Private
  */
 router.post("/payment/create/order", authenticateUser, createOrderController);
+
+/**
+ * @route POST /api/cart/payment/verify/order
+ * @desc Verify the payment for the order created from the cart
+ * @access Private
+ */
+router.post("/payment/verify/order", authenticateUser, verifyOrderController);
 
 export default router;
