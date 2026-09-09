@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
+import wishlistRoutes from "./routes/wishlist.routes.js";
 
 import { config } from "./config/config.js";
 
@@ -65,6 +66,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 // cart routes
 app.use("/api/cart", cartRoutes);
+// wishlist routes
+app.use("/api/wishlist", wishlistRoutes);
 
 // -----------------FRONTEND-----------------
 app.use(express.static(path.join(__dirname, "../dist")));
