@@ -179,6 +179,23 @@ snitch-clone/
 
 ---
 
+## 📸 Preview
+
+### Home Pages
+
+| | |
+|---|---|
+| ![Home Page](./Frontend/public/preview/home-page.png) | ![Home Page](./Frontend/public/preview/home-page2.png) |
+| ![Home Page](./Frontend/public/preview/home-page3.png) | ![Home Page](./Frontend/public/preview/home-page4.png) |
+
+
+### Product Details Pages
+| | |
+|---|---|
+| ![Product Details](./Frontend/public/preview/product-details-page.png) | ![Product Details](./Frontend/public/preview/product-variants.png) |
+
+---
+
 ## 🚀 Get Started
 
 ### 📋 Prerequisites
