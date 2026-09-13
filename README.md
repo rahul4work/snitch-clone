@@ -205,7 +205,7 @@ snitch-clone/
   </tr>
 </table>
 
-### 🏠 Home Pages
+### 🏠 Home Page
 <table>
   <tr>
     <td width="50%">
@@ -215,7 +215,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Home Page</p>
     </td>
     <td width="50%">
       <img
@@ -224,7 +223,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Home Page 2</p>
     </td>
   </tr>
 
@@ -236,7 +234,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Home Page 3</p>
     </td>
     <td width="50%">
       <img
@@ -245,7 +242,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Home Page 4</p>
     </td>
   </tr>
 </table>
@@ -269,7 +265,7 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Product Variants</p>
+      <p align="center">Product Details with different Variants</p>
     </td>
   </tr>
 </table>
@@ -284,7 +280,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Cart Page</p>
     </td>
     <td width="50%">
       <img
@@ -293,7 +288,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Cart Page 2</p>
     </td>
   </tr>
 </table>
@@ -308,7 +302,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Razorpay Payment</p>
     </td>
     <td width="50%">
       <img
@@ -317,7 +310,6 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Razorpay Payment</p>
     </td>
   </tr>
 
@@ -329,14 +321,13 @@ snitch-clone/
         width="100%"
         height="200"
       />
-      <p align="center">Razorpay Payment 3</p>
     </td>
     <td width="50%">
     </td>
   </tr>
 </table>
 
-### ✅ Order Confirmation Page
+### ✅ Order Confirmation
 <table>
   <tr>
     <td width="50%">
