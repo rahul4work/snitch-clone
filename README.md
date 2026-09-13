@@ -181,6 +181,11 @@ snitch-clone/
 
 ## 📸 Preview
 
+### Login and Registration Pages
+| | |
+|---|---|
+| ![Login Page](./Frontend/public/preview/login-page.png) | ![Login Page](./Frontend/public/preview/register-page.png) |
+
 ### Home Pages
 
 | | |
@@ -188,11 +193,38 @@ snitch-clone/
 | ![Home Page](./Frontend/public/preview/home-page.png) | ![Home Page](./Frontend/public/preview/home-page2.png) |
 | ![Home Page](./Frontend/public/preview/home-page3.png) | ![Home Page](./Frontend/public/preview/home-page4.png) |
 
-
 ### Product Details Pages
 | | |
 |---|---|
 | ![Product Details](./Frontend/public/preview/product-details-page.png) | ![Product Details](./Frontend/public/preview/product-variants.png) |
+
+### Cart Page
+| | |
+|---|---|
+| ![Cart Page](./Frontend/public/preview/cart-page.png) | ![Cart Page](./Frontend/public/preview/cart-page2.png) |
+
+### Checkout Page
+| | |
+|---|---|
+| ![Checkout Page](./Frontend/public/preview/razorpay-payment.png) | ![Checkout Page](./Frontend/public/preview/razorpay-payment2.png) |
+| ![Checkout Page](./Frontend/public/preview/razorpay-payment3.png) |  |
+
+### Order Confirmation Page
+| | |
+|---|---|
+| ![Checkout Page](./Frontend/public/preview/razorpay-payment4.png) | ![Order Confirmation](./Frontend/public/preview/order-confirmation-page.png) |
+
+### Seller Account
+| | |
+|---|---|
+|![Seller Account](./Frontend/public/preview/seller-dashboard-page.png) Dashboard page | ![Seller Account](./Frontend//public//preview/seller-create-product-page.png) Create Product page |
+|![Seller Account](./Frontend/public/preview/seller-listed-products-page.png) Listed Products page | ![Seller Account](./Frontend/public/preview/seller-product-details-page.png) Seller Product Details page with variants |
+|![Seller Account](./Frontend/public/preview/seller-product-details-page2.png) Listed products multiple variants |![Seller Account](./Frontend/public/preview/add-product-variants-byseller.png) Add Product Variant |
+
+### User Profile
+| | |
+|---|---|
+|![User Profile](./Frontend/public/preview/user-profile-page.png) User Profile page | ![User Profile](./Frontend/public/preview/user-profile-details.png) User's Details |
 
 ---
 
