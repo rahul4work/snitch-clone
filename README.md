@@ -181,50 +181,291 @@ snitch-clone/
 
 ## 📸 Preview
 
-### Login and Registration Pages
-| | |
-|---|---|
-| ![Login Page](./Frontend/public/preview/login-page.png) | ![Login Page](./Frontend/public/preview/register-page.png) |
+### 🔐 Login and Registration Pages
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/login-page.png"
+        alt="Login Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Login Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/register-page.png"
+        alt="Registration Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Registration Page</p>
+    </td>
+  </tr>
+</table>
 
-### Home Pages
+### 🏠 Home Pages
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/home-page.png"
+        alt="Home Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Home Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/home-page2.png"
+        alt="Home Page 2"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Home Page 2</p>
+    </td>
+  </tr>
 
-| | |
-|---|---|
-| ![Home Page](./Frontend/public/preview/home-page.png) | ![Home Page](./Frontend/public/preview/home-page2.png) |
-| ![Home Page](./Frontend/public/preview/home-page3.png) | ![Home Page](./Frontend/public/preview/home-page4.png) |
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/home-page3.png"
+        alt="Home Page 3"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Home Page 3</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/home-page4.png"
+        alt="Home Page 4"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Home Page 4</p>
+    </td>
+  </tr>
+</table>
 
-### Product Details Pages
-| | |
-|---|---|
-| ![Product Details](./Frontend/public/preview/product-details-page.png) | ![Product Details](./Frontend/public/preview/product-variants.png) |
+### 🛍️ Product Details Pages
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/product-details-page.png"
+        alt="Product Details Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Product Details</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/product-variants.png"
+        alt="Product Variants"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Product Variants</p>
+    </td>
+  </tr>
+</table>
 
-### Cart Page
-| | |
-|---|---|
-| ![Cart Page](./Frontend/public/preview/cart-page.png) | ![Cart Page](./Frontend/public/preview/cart-page2.png) |
+### 🛒 Cart Page
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/cart-page.png"
+        alt="Cart Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Cart Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/cart-page2.png"
+        alt="Cart Page 2"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Cart Page 2</p>
+    </td>
+  </tr>
+</table>
 
-### Checkout Page
-| | |
-|---|---|
-| ![Checkout Page](./Frontend/public/preview/razorpay-payment.png) | ![Checkout Page](./Frontend/public/preview/razorpay-payment2.png) |
-| ![Checkout Page](./Frontend/public/preview/razorpay-payment3.png) |  |
+### 💳 Checkout Page
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/razorpay-payment.png"
+        alt="Razorpay Payment"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Razorpay Payment</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/razorpay-payment2.png"
+        alt="Razorpay Payment 2"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Razorpay Payment</p>
+    </td>
+  </tr>
 
-### Order Confirmation Page
-| | |
-|---|---|
-| ![Checkout Page](./Frontend/public/preview/razorpay-payment4.png) | ![Order Confirmation](./Frontend/public/preview/order-confirmation-page.png) |
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/razorpay-payment3.png"
+        alt="Razorpay Payment 3"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Razorpay Payment 3</p>
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
+</table>
 
-### Seller Account
-| | |
-|---|---|
-|![Seller Account](./Frontend/public/preview/seller-dashboard-page.png) Dashboard page | ![Seller Account](./Frontend//public//preview/seller-create-product-page.png) Create Product page |
-|![Seller Account](./Frontend/public/preview/seller-listed-products-page.png) Listed Products page | ![Seller Account](./Frontend/public/preview/seller-product-details-page.png) Seller Product Details page with variants |
-|![Seller Account](./Frontend/public/preview/seller-product-details-page2.png) Listed products multiple variants |![Seller Account](./Frontend/public/preview/add-product-variants-byseller.png) Add Product Variant |
+### ✅ Order Confirmation Page
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/razorpay-payment4.png"
+        alt="Razorpay Payment Confirmation"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Payment Confirmation</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/order-confirmation-page.png"
+        alt="Order Confirmation"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Order Confirmation</p>
+    </td>
+  </tr>
+</table>
 
-### User Profile
-| | |
-|---|---|
-|![User Profile](./Frontend/public/preview/user-profile-page.png) User Profile page | ![User Profile](./Frontend/public/preview/user-profile-details.png) User's Details |
+### 🏪 Seller Account
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/seller-dashboard-page.png"
+        alt="Seller Dashboard"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Dashboard Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/seller-create-product-page.png"
+        alt="Create Product"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Create Product Page</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/seller-listed-products-page.png"
+        alt="Seller Listed Products"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Listed Products Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/seller-product-details-page.png"
+        alt="Seller Product Details"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Seller Product Details with Variants</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/seller-product-details-page2.png"
+        alt="Multiple Product Variants"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Listed Products with Multiple Variants</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/add-product-variants-byseller.png"
+        alt="Add Product Variant"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Add Product Variant</p>
+    </td>
+  </tr>
+</table>
+
+### 👤 User Profile
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/user-profile-page.png"
+        alt="User Profile"
+        width="100%"
+        height="200"
+      />
+      <p align="center">User Profile Page</p>
+    </td>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/user-profile-details.png"
+        alt="User Profile Details"
+        width="100%"
+        height="200"
+      />
+      <p align="center">User Details</p>
+    </td>
+  </tr>
+</table>
+
+### 🎁 Wishlist Page
+<table>
+  <tr>
+    <td width="50%">
+      <img
+        src="./Frontend/public/preview/wishlist-page.png"
+        alt="Wishlist Page"
+        width="100%"
+        height="200"
+      />
+      <p align="center">Wishlist Page</p>
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
+</table>
 
 ---
 
