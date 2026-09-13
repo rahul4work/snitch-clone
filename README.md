@@ -441,23 +441,6 @@ snitch-clone/
   </tr>
 </table>
 
-### 🎁 Wishlist Page
-<table>
-  <tr>
-    <td width="50%">
-      <img
-        src="./Frontend/public/preview/wishlist-page.png"
-        alt="Wishlist Page"
-        width="100%"
-        height="200"
-      />
-      <p align="center">Wishlist Page</p>
-    </td>
-    <td width="50%">
-    </td>
-  </tr>
-</table>
-
 ---
 
 ## 🚀 Get Started
